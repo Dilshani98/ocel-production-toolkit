@@ -63,6 +63,28 @@ def inject_object_clones(ocel, object_type, severity, seed, gt_log):
 
     objects_df = pd.concat([objects_df, pd.DataFrame(new_objects)], ignore_index=True)
     return objects_df, relations_df
- 
+
+
+def inject_missing_e2o(ocel, activity_filter, severity, seed, gt_log):
+# 'Lost Memory' pattern: removes a fraction of event-object relationship
+    rng = random.Random(seed)
+    relations_df = ocel.relations.copy()
+
+    eligible_mask = relations_df["ocel:activity"] == activity_filter
+    eligible_idx = relations_df[eligible_mask].index.tolist()
+
+    n_to_remove = int(len(eligible_idx) * severity)
+    to_remove = rng.sample(eligible_idx, n_to_remove)
+
+    for idx in to_remove:
+        row = relations_df.loc[idx]
+        gt_log.record("missing_e2o", "relation_removed", row["ocel:oid"],
+                       {"event_id": row["ocel:eid"], "activity": row["ocel:activity"],
+                        "object_type": row["ocel:type"]})
+
+    relations_df = relations_df.drop(index=to_remove)
+    return relations_df
+
+
 
 
