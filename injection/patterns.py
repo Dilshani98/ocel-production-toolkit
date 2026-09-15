@@ -87,4 +87,41 @@ def inject_missing_e2o(ocel, activity_filter, severity, seed, gt_log):
 
 
 
+def inject_incorrect_o2o(ocel, qualifier_filter, severity, seed, gt_log, max_id_distance=3):
+# 'Cuckoo's Egg' pattern: swaps the target of a fraction of object-object relationships to a nearby
+
+    rng = random.Random(seed)
+    o2o_df = ocel.o2o.copy()
+
+    eligible_mask = o2o_df["ocel:qualifier"] == qualifier_filter
+    eligible_idx = o2o_df[eligible_mask].index.tolist()
+    n_to_swap = int(len(eligible_idx) * severity)
+    targets = rng.sample(eligible_idx, n_to_swap)
+
+    all_target_ids = set(o2o_df.loc[eligible_idx, "ocel:oid_2"])
+
+    def extract_number(oid):
+        match = re.search(r"(\d+)$", oid)
+        return int(match.group(1)) if match else None
+
+    for idx in targets:
+        row = o2o_df.loc[idx]
+        original_target = row["ocel:oid_2"]
+        prefix = re.sub(r"\d+$", "", original_target)
+        num = extract_number(original_target)
+
+        candidates = [f"{prefix}{num + d}" for d in range(-max_id_distance, max_id_distance + 1)
+                      if d != 0 and f"{prefix}{num + d}" in all_target_ids]
+        if not candidates:
+            continue
+
+        wrong_target = rng.choice(candidates)
+        o2o_df.loc[idx, "ocel:oid_2"] = wrong_target
+
+        gt_log.record("incorrect_o2o", "target_swapped", row["ocel:oid"],
+                       {"original_target": original_target, "wrong_target": wrong_target,
+                        "qualifier": qualifier_filter})
+
+    return o2o_df
+
 
