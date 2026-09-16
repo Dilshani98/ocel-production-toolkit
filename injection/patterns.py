@@ -125,3 +125,34 @@ def inject_incorrect_o2o(ocel, qualifier_filter, severity, seed, gt_log, max_id_
     return o2o_df
 
 
+# (Still working on the below function, but it's commented out for now)
+
+# def inject_timestamp_drift(ocel, activity_filter, severity, seed, gt_log,
+#                              drift_range_seconds=(60, 3600)):
+    
+#     # Simulates a clock-drift/synchronization failure
+    
+#     rng = random.Random(seed)
+#     events_df = ocel.events.copy()
+
+#     eligible = events_df[events_df["ocel:activity"] == activity_filter].sort_values("ocel:timestamp")
+#     n_affected = int(len(eligible) * severity)
+#     if n_affected == 0:
+#         return events_df
+
+#     # Pick ONE contiguous block in time — this is the key realism detail
+#     start_idx = rng.randint(0, len(eligible) - n_affected)
+#     affected_ids = eligible.iloc[start_idx:start_idx + n_affected]["ocel:eid"].tolist()
+
+#     drift_seconds = rng.randint(*drift_range_seconds) * rng.choice([-1, 1])
+#     drift = pd.Timedelta(seconds=drift_seconds)
+
+#     mask = events_df["ocel:eid"].isin(affected_ids)
+#     original_timestamps = events_df.loc[mask, "ocel:timestamp"].copy()
+#     events_df.loc[mask, "ocel:timestamp"] = events_df.loc[mask, "ocel:timestamp"] + drift
+
+#     for eid, orig_ts in zip(affected_ids, original_timestamps):
+#         gt_log.record("timestamp_drift", "timestamp_shifted", eid,
+#                        {"original_timestamp": str(orig_ts), "drift_seconds": drift_seconds})
+
+#     return events_df
