@@ -2,7 +2,7 @@ import pm4py
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from injection.ground_truth_log import GroundTruthLog
-from injection.patterns import inject_object_clones, validate_object_clones, inject_missing_e2o
+from injection.patterns import inject_object_clones, validate_object_clones, inject_missing_e2o, inject_timestamp_drift
 
 
 ocel = pm4py.read_ocel2_xml("socel2_hinge.xml")
@@ -81,3 +81,30 @@ print("Problems found:", validate_object_clones(messy_objects, gt_log))
 # # Confirm those specific rows actually changed in messy_o2o
 # sample_oid = gt_log3.changes[0]["target_id"]
 # print(messy_o2o[messy_o2o["ocel:oid"] == sample_oid])
+
+
+
+
+
+#------------------------Checking the timestamp drift injection:
+
+
+# gt_log4 = GroundTruthLog()
+# messy_events = inject_timestamp_drift(
+#     ocel, activity_filter="HeatSteelSheet", severity=0.10, seed=42, gt_log=gt_log4
+# )
+# print(f"Changes logged: {len(gt_log4.changes)}")
+# print(gt_log4.changes[0])
+
+# # Confirm the shift actually landed
+# sample_eid = gt_log4.changes[0]["target_id"]
+# print(ocel.events[ocel.events["ocel:eid"] == sample_eid]["ocel:timestamp"])
+# print(messy_events[messy_events["ocel:eid"] == sample_eid]["ocel:timestamp"])
+
+# affected_ids = [c["target_id"] for c in gt_log4.changes]
+# affected_events = ocel.events[ocel.events["ocel:eid"].isin(affected_ids)].sort_values("ocel:timestamp")
+# print(affected_events["ocel:timestamp"].min(), "to", affected_events["ocel:timestamp"].max())
+# print(f"Total HeatSteelSheet events in that range: {len(ocel.events[(ocel.events['ocel:activity']=='HeatSteelSheet') & (ocel.events['ocel:timestamp'].between(affected_events['ocel:timestamp'].min(), affected_events['ocel:timestamp'].max()))])}")
+
+# print(messy_events["ocel:timestamp"].min(), messy_events["ocel:timestamp"].max())
+# print(ocel.events["ocel:timestamp"].min(), ocel.events["ocel:timestamp"].max())
