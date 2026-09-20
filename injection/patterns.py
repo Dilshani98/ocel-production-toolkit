@@ -156,3 +156,32 @@ def inject_timestamp_drift(ocel, activity_filter, severity, seed, gt_log,
                        {"original_timestamp": str(orig_ts), "drift_seconds": drift_seconds})
 
     return events_df
+
+
+
+def inject_label_distortion(ocel, activity_filter, severity, seed, gt_log, distortion_type="typo"):
+# Simulates the 'Distorted Label' pattern: add a small spelling variation into a some of activity labels
+
+    rng = random.Random(seed)
+    events_df = ocel.events.copy()
+
+    eligible_idx = events_df[events_df["ocel:activity"] == activity_filter].index.tolist()
+    n_to_distort = int(len(eligible_idx) * severity)
+    targets = rng.sample(eligible_idx, n_to_distort)
+
+    def distort(label):
+        if len(label) < 4:
+            return label
+        pos = rng.randint(1, len(label) - 2)
+        # drop one character
+        return label[:pos] + label[pos + 1:]
+
+    for idx in targets:
+        original_label = events_df.loc[idx, "ocel:activity"]
+        distorted_label = distort(original_label)
+        events_df.loc[idx, "ocel:activity"] = distorted_label
+        gt_log.record("label_distortion", "activity_relabelled",
+                        events_df.loc[idx, "ocel:eid"],
+                        {"original_label": original_label, "distorted_label": distorted_label})
+
+    return events_df
