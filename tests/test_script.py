@@ -2,7 +2,7 @@ import pm4py
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from injection.ground_truth_log import GroundTruthLog
-from injection.patterns import inject_object_clones, validate_object_clones, inject_missing_e2o, inject_timestamp_drift
+from injection.patterns import inject_object_clones, validate_object_clones, inject_missing_e2o, inject_timestamp_drift, inject_incorrect_o2o, inject_label_distortion
 
 
 ocel = pm4py.read_ocel2_xml("socel2_hinge.xml")
@@ -108,3 +108,16 @@ print("Problems found:", validate_object_clones(messy_objects, gt_log))
 
 # print(messy_events["ocel:timestamp"].min(), messy_events["ocel:timestamp"].max())
 # print(ocel.events["ocel:timestamp"].min(), ocel.events["ocel:timestamp"].max())
+
+
+
+
+#------------------------Checking the label distortion injection:
+
+gt_log5 = GroundTruthLog()
+messy_events5 = inject_label_distortion(
+    ocel, activity_filter="HeatSteelSheet", severity=0.05, seed=42, gt_log=gt_log5
+)
+print(f"Changes logged: {len(gt_log5.changes)}")
+print(gt_log5.changes[0])
+print(messy_events5["ocel:activity"].value_counts())
