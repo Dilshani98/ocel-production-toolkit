@@ -3,18 +3,49 @@ import re
 import pandas as pd
 
 
-def _generate_alias_id(rng, object_type, existing_ids):
-    #Creates a plausible, independent-looking ID for a cloned object
+# def _generate_alias_id(rng, object_type, existing_ids):
+#     #Creates a plausible, independent-looking ID for a cloned object
 
-    prefix_map = {
-        "SteelSheet": "SS", "FormedPart": "FP", "MalePart": "MP",
-        "FemalePart": "FEP", "Hinge": "HG", "SteelPin": "PIN",
-    }
-    prefix = prefix_map.get(object_type, "OBJ")
+#     prefix_map = {
+#         "SteelSheet": "SS", "FormedPart": "FP", "MalePart": "MP",
+#         "FemalePart": "FEP", "Hinge": "HG", "SteelPin": "PIN",
+#     }
+#     prefix = prefix_map.get(object_type, "OBJ")
+#     while True:
+#         candidate = f"{prefix}-{rng.randint(100000, 999999)}"
+#         if candidate not in existing_ids:
+#             return candidate
+
+
+
+
+# Cloned ID generation function that preserves the original ID's style. Research validity improvement
+def _generate_same_style_id(rng, original_id, existing_ids):
+    #Generate a new object ID using the same identifier style as the original object ID
+
+    match = re.match(r"^(.*?)(\d+)$", str(original_id))
+
+    if match:
+        prefix = match.group(1)
+        numeric_part = match.group(2)
+
+        min_value = 10 ** (len(numeric_part) - 1)
+        max_value = (10 ** len(numeric_part)) - 1
+
+        while True:
+            new_number = rng.randint(min_value, max_value)
+            candidate = f"{prefix}{new_number}"
+
+            if candidate not in existing_ids:
+                return candidate
+
+    # Fallback for IDs without a numeric suffix
     while True:
-        candidate = f"{prefix}-{rng.randint(100000, 999999)}"
+        candidate = f"{original_id}_{rng.randint(1000, 9999)}"
+
         if candidate not in existing_ids:
             return candidate
+
 
 
 def validate_object_clones(objects_df, gt_log):
@@ -43,7 +74,7 @@ def inject_object_clones(ocel, object_type, severity, seed, gt_log):
 
     new_objects = []
     for original_id in targets:
-        clone_id = _generate_alias_id(rng, object_type, existing_ids)
+        clone_id = _generate_same_style_id(rng, object_type, existing_ids)
         existing_ids.add(clone_id)
 
         original_row = objects_df[objects_df["ocel:oid"] == original_id].iloc[0].copy()
@@ -64,6 +95,7 @@ def inject_object_clones(ocel, object_type, severity, seed, gt_log):
 
     objects_df = pd.concat([objects_df, pd.DataFrame(new_objects)], ignore_index=True)
     return objects_df, relations_df
+
 
 
 def inject_missing_e2o(ocel, activity_filter, severity, seed, gt_log):
