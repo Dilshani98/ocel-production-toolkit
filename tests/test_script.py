@@ -114,10 +114,10 @@ print("Problems found:", validate_object_clones(messy_objects, gt_log))
 
 #------------------------Checking the label distortion injection:
 
-gt_log5 = GroundTruthLog()
-messy_events5 = inject_label_distortion(
-    ocel, activity_filter="HeatSteelSheet", severity=0.05, seed=42, gt_log=gt_log5
-)
-print(f"Changes logged: {len(gt_log5.changes)}")
-print(gt_log5.changes[0])
-print(messy_events5["ocel:activity"].value_counts())
+# gt_log5 = GroundTruthLog()
+# messy_events5 = inject_label_distortion(
+#     ocel, activity_filter="HeatSteelSheet", severity=0.05, seed=42, gt_log=gt_log5
+# )
+# print(f"Changes logged: {len(gt_log5.changes)}")
+# print(gt_log5.changes[0])
+# print(messy_events5["ocel:activity"].value_counts())
