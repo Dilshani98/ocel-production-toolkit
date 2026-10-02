@@ -20,3 +20,6 @@ Thumbs.db
 
 # Environment variables (if you add any later, e.g. API keys)
 .env
+
+data/messy/*.csv
+data/messy/*.json
