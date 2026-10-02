@@ -5,24 +5,25 @@ from injection.ground_truth_log import GroundTruthLog
 from injection.patterns import inject_object_clones, validate_object_clones, inject_missing_e2o, inject_timestamp_drift, inject_incorrect_o2o, inject_label_distortion
 
 
-ocel = pm4py.read_ocel2_xml("socel2_hinge.xml")
+#ocel = pm4py.read_ocel2_xml("socel2_hinge.xml")
 
+ocel = pm4py.read_ocel2_xml(os.path.join(os.path.dirname(__file__), "..", "socel2_hinge.xml")) #debug the import error
 
 # --------------------Checking the object clone injection and validation:
 
-gt_log = GroundTruthLog()
+# gt_log = GroundTruthLog()
 
-messy_objects, messy_relations = inject_object_clones(
-    ocel, object_type="SteelSheet", severity=0.15, seed=42, gt_log=gt_log
-)
+# messy_objects, messy_relations = inject_object_clones(
+#     ocel, object_type="SteelSheet", severity=0.15, seed=42, gt_log=gt_log
+# )
 
-print(f"Original: {len(ocel.objects)}, Messy: {len(messy_objects)}")
+# print(f"Original: {len(ocel.objects)}, Messy: {len(messy_objects)}")
 
-print(gt_log.changes[0])  # Show a few logged changes
+# print(gt_log.changes[0])  # Show a few logged changes
 
-print(messy_objects[messy_objects["ocel:oid"].str.startswith("SS-")].head())
+# print(messy_objects[messy_objects["ocel:oid"].str.startswith("SS-")].head())
 
-print("Problems found:", validate_object_clones(messy_objects, gt_log))
+# print("Problems found:", validate_object_clones(messy_objects, gt_log))
 
 
 
@@ -64,11 +65,9 @@ print("Problems found:", validate_object_clones(messy_objects, gt_log))
 
 
 # ----------------------Checking the incorrect object-object relation injection:
+gt_log3 = GroundTruthLog()
+messy_o2o = inject_incorrect_o2o(ocel, qualifier_filter="created from", severity=0.10, seed=42, gt_log=gt_log3)
 
-# gt_log3 = GroundTruthLog()
-# messy_o2o = inject_incorrect_o2o(
-#     ocel, qualifier_filter="created from", severity=0.10, seed=42, gt_log=gt_log3
-# )
 # print(f"Original O2O rows: {len(ocel.o2o)}, Messy O2O rows: {len(messy_o2o)}")
 # print(f"Changes logged: {len(gt_log3.changes)}")
 # print(messy_o2o.head())
@@ -82,6 +81,10 @@ print("Problems found:", validate_object_clones(messy_objects, gt_log))
 # sample_oid = gt_log3.changes[0]["target_id"]
 # print(messy_o2o[messy_o2o["ocel:oid"] == sample_oid])
 
+
+print("Rows:", len(messy_o2o), "(should be 20561)")
+print("Changes logged:", len(gt_log3.changes))
+print("Duplicate rows:", messy_o2o.duplicated().sum(), "(should be 0)")
 
 
 
@@ -121,3 +124,10 @@ print("Problems found:", validate_object_clones(messy_objects, gt_log))
 # print(f"Changes logged: {len(gt_log5.changes)}")
 # print(gt_log5.changes[0])
 # print(messy_events5["ocel:activity"].value_counts())
+
+
+
+# o2o_df = ocel.o2o  # or your messy_o2o dataframe
+# dupes = o2o_df[o2o_df.duplicated(subset=["ocel:oid", "ocel:oid_2", "ocel:qualifier"], keep=False)]
+# print(f"Duplicate O2O rows: {len(dupes)}")
+# print(dupes.sort_values("ocel:oid"))
