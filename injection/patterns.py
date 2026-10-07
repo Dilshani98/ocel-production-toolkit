@@ -17,6 +17,37 @@ def _generate_alias_id(rng, object_type, existing_ids):
             return candidate
 
 
+
+
+# Cloned ID generation function that preserves the original ID's style. Research validity improvement
+# def _generate_same_style_id(rng, original_id, existing_ids):
+#     #Generate a new object ID using the same identifier style as the original object ID
+
+#     match = re.match(r"^(.*?)(\d+)$", str(original_id))
+
+#     if match:
+#         prefix = match.group(1)
+#         numeric_part = match.group(2)
+
+#         min_value = 10 ** (len(numeric_part) - 1)
+#         max_value = (10 ** len(numeric_part)) - 1
+
+#         while True:
+#             new_number = rng.randint(min_value, max_value)
+#             candidate = f"{prefix}{new_number}"
+
+#             if candidate not in existing_ids:
+#                 return candidate
+
+#     # Fallback for IDs without a numeric suffix
+#     while True:
+#         candidate = f"{original_id}_{rng.randint(1000, 9999)}"
+
+#         if candidate not in existing_ids:
+#             return candidate
+
+
+
 def validate_object_clones(objects_df, gt_log):
     # Check every clone exists in the object table
     problems = []
@@ -66,6 +97,7 @@ def inject_object_clones(ocel, object_type, severity, seed, gt_log):
     return objects_df, relations_df
 
 
+
 def inject_missing_e2o(ocel, activity_filter, severity, seed, gt_log):
 # 'Lost Memory' pattern: removes a fraction of event-object relationship
     rng = random.Random(seed)
@@ -101,32 +133,53 @@ def inject_incorrect_o2o(ocel, qualifier_filter, severity, seed, gt_log, max_id_
 
     all_target_ids = set(o2o_df.loc[eligible_idx, "ocel:oid_2"])
 
+    # look every relationship that currently exists and avoid creating duplicates
+    existing_pairs = set(zip(o2o_df["ocel:oid"],
+                             o2o_df["ocel:oid_2"],
+                             o2o_df["ocel:qualifier"]))
+
     def extract_number(oid):
         match = re.search(r"(\d+)$", oid)
         return int(match.group(1)) if match else None
 
     for idx in targets:
         row = o2o_df.loc[idx]
+        source = row["ocel:oid"]
         original_target = row["ocel:oid_2"]
         prefix = re.sub(r"\d+$", "", original_target)
         num = extract_number(original_target)
-
-        candidates = [f"{prefix}{num + d}" for d in range(-max_id_distance, max_id_distance + 1)
-                      if d != 0 and f"{prefix}{num + d}" in all_target_ids]
-        if not candidates:
+        if num is None:
             continue
+
+        # Nearby IDs of the same type, EXCLUDING any target this source is already linked to (that would create a duplicate row)
+        candidates = []
+        for d in range(-max_id_distance, max_id_distance + 1):
+            if d == 0:
+                continue
+            candidate = f"{prefix}{num + d}"
+            if candidate in all_target_ids and \
+               (source, candidate, qualifier_filter) not in existing_pairs:
+                candidates.append(candidate)
+
+        if not candidates:
+            continue   # no safe swap available, skip this one
 
         wrong_target = rng.choice(candidates)
         o2o_df.loc[idx, "ocel:oid_2"] = wrong_target
 
-        gt_log.record("incorrect_o2o", "target_swapped", row["ocel:oid"],
-                       {"original_target": original_target, "wrong_target": wrong_target,
-                        "qualifier": qualifier_filter})
+        # NEW: keep the lookup in sync with the swap we just made
+        existing_pairs.discard((source, original_target, qualifier_filter))
+        existing_pairs.add((source, wrong_target, qualifier_filter))
+
+        gt_log.record("incorrect_o2o", "target_swapped", source,
+                      {"original_target": original_target,
+                       "wrong_target": wrong_target,
+                       "qualifier": qualifier_filter})
 
     return o2o_df
 
 
-# (Still working on the below function, but it's commented out for now)
+
 
 def inject_timestamp_drift(ocel, activity_filter, severity, seed, gt_log,
                              drift_range_seconds=(60, 3600)):
@@ -149,12 +202,12 @@ def inject_timestamp_drift(ocel, activity_filter, severity, seed, gt_log,
     drift = pd.Timedelta(seconds=drift_seconds)
 
     mask = events_df["ocel:eid"].isin(affected_ids)
-    original_timestamps = events_df.loc[mask, "ocel:timestamp"].copy()
     events_df.loc[mask, "ocel:timestamp"] = events_df.loc[mask, "ocel:timestamp"] + drift
 
-    for eid, orig_ts in zip(affected_ids, original_timestamps):
+    for eid in affected_ids:
+        orig_ts = events_df.loc[events_df["ocel:eid"] == eid, "ocel:timestamp"].iloc[0] - drift
         gt_log.record("timestamp_drift", "timestamp_shifted", eid,
-                       {"original_timestamp": str(orig_ts), "drift_seconds": drift_seconds})
+                    {"original_timestamp": str(orig_ts), "drift_seconds": drift_seconds})
 
     return events_df
 
