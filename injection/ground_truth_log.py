@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 class GroundTruthLog:
     """Records every change the injection module makes. For the use later for scoring script"""
