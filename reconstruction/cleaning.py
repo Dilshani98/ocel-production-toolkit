@@ -62,3 +62,47 @@ def clean_activity_labels(events, rare_share=0.02, similarity=0.85, dominance=5,
                                                            "score_1", "candidate_2", "score_2"])
         return events, change_log, ambiguous
     return events, change_log
+
+
+def repair_timestamp_drift(events, min_share=0.9, min_suspects=20, percentile=95):
+ 
+    events = events.copy().reset_index(drop=True)
+    ts = pd.to_datetime(events["_timestamp"], utc=True, format="mixed")
+    events["_timestamp"] = ts
+
+    step = ts.diff().dt.total_seconds()                 # time difference to previous row
+    backward_before = int((step < 0).sum())
+    suspect_pos = [i - 1 for i in step.index[step < 0]]  # row BEFORE each backward step
+    gaps = [-step.iloc[i + 1] for i in suspect_pos]
+
+    report = {"backward_before": backward_before, "n_suspects": len(suspect_pos),
+              "culprit_activity": None, "shift_seconds": 0, "n_corrected": 0,
+              "backward_after": backward_before, "status": "no systematic drift found"}
+    empty_log = pd.DataFrame(columns=["record_id", "old_timestamp", "new_timestamp", "shift_seconds"])
+
+    if len(suspect_pos) < min_suspects:
+        return events, report, empty_log
+
+    acts = events["_activity"].iloc[suspect_pos]
+    culprit, share = acts.value_counts().index[0], acts.value_counts(normalize=True).iloc[0]
+    if share < min_share:
+        return events, report, empty_log
+
+    culprit_gaps = [g for p, g in zip(suspect_pos, gaps) if events["_activity"].iloc[p] == culprit]
+    shift = int(round(float(pd.Series(culprit_gaps).quantile(percentile / 100))))
+
+    first, last = min(suspect_pos), max(suspect_pos)
+    in_block = (events.index >= first) & (events.index <= last) & (events["_activity"] == culprit)
+
+    old = events.loc[in_block, "_timestamp"].copy()
+    events.loc[in_block, "_timestamp"] = old - pd.Timedelta(seconds=shift)
+
+    change_log = pd.DataFrame({"record_id": events.loc[in_block, "_record_id"].values,
+                               "old_timestamp": old.values,
+                               "new_timestamp": events.loc[in_block, "_timestamp"].values,
+                               "shift_seconds": shift})
+    backward_after = int((events["_timestamp"].diff().dt.total_seconds() < 0).sum())
+    report.update({"culprit_activity": culprit, "shift_seconds": shift,
+                   "n_corrected": int(in_block.sum()), "backward_after": backward_after,
+                   "status": "repaired"})
+    return events, report, change_log
