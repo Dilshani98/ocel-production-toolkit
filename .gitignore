@@ -23,3 +23,6 @@ Thumbs.db
 
 data/messy/*.csv
 data/messy/*.json
+
+# Generated experiment results
+tests/*.csv
