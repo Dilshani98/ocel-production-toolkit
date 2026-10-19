@@ -26,3 +26,8 @@ data/messy/*.json
 
 # Generated experiment results
 tests/*.csv
+
+Reference/
+
+# Scores, tables and figures from experiments
+results/
