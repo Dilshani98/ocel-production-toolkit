@@ -71,38 +71,49 @@ def repair_timestamp_drift(events, min_share=0.9, min_suspects=20, percentile=95
     events["_timestamp"] = ts
 
     step = ts.diff().dt.total_seconds()                 # time difference to previous row
-    backward_before = int((step < 0).sum())
-    suspect_pos = [i - 1 for i in step.index[step < 0]]  # row BEFORE each backward step
-    gaps = [-step.iloc[i + 1] for i in suspect_pos]
+    back = step.index[step < 0]                         # rows that go back in time
+    backward_before = len(back)
+    gaps = (-step[back]).tolist()
 
-    report = {"backward_before": backward_before, "n_suspects": len(suspect_pos),
-              "culprit_activity": None, "shift_seconds": 0, "n_corrected": 0,
+    report = {"backward_before": backward_before, "n_suspects": backward_before,
+              "direction": None, "culprit_activity": None, "shift_seconds": 0, "n_corrected": 0,
               "backward_after": backward_before, "status": "no systematic drift found"}
     empty_log = pd.DataFrame(columns=["record_id", "old_timestamp", "new_timestamp", "shift_seconds"])
 
-    if len(suspect_pos) < min_suspects:
+    if backward_before < min_suspects:
         return events, report, empty_log
 
-    acts = events["_activity"].iloc[suspect_pos]
-    culprit, share = acts.value_counts().index[0], acts.value_counts(normalize=True).iloc[0]
-    if share < min_share:
+    # Late shift: the row BEFORE each backward step is too late.
+    # Early shift: the row AT each backward step is too early.
+    sides = {"late": back - 1, "early": back}
+    dominant = {}
+    for direction, pos in sides.items():
+        shares = events["_activity"].iloc[pos].value_counts(normalize=True)
+        if shares.iloc[0] >= min_share:
+            dominant[direction] = shares.index[0]
+    if len(dominant) != 1:              # neither side, or both sides: do not guess
+        if dominant:
+            report["status"] = "ambiguous"
         return events, report, empty_log
 
+    direction, culprit = dominant.popitem()
+    suspect_pos = sides[direction]
     culprit_gaps = [g for p, g in zip(suspect_pos, gaps) if events["_activity"].iloc[p] == culprit]
     shift = int(round(float(pd.Series(culprit_gaps).quantile(percentile / 100))))
+    sign = -1 if direction == "late" else 1
 
     first, last = min(suspect_pos), max(suspect_pos)
     in_block = (events.index >= first) & (events.index <= last) & (events["_activity"] == culprit)
 
     old = events.loc[in_block, "_timestamp"].copy()
-    events.loc[in_block, "_timestamp"] = old - pd.Timedelta(seconds=shift)
+    events.loc[in_block, "_timestamp"] = old + pd.Timedelta(seconds=sign * shift)
 
     change_log = pd.DataFrame({"record_id": events.loc[in_block, "_record_id"].values,
                                "old_timestamp": old.values,
                                "new_timestamp": events.loc[in_block, "_timestamp"].values,
-                               "shift_seconds": shift})
+                               "shift_seconds": sign * shift})
     backward_after = int((events["_timestamp"].diff().dt.total_seconds() < 0).sum())
-    report.update({"culprit_activity": culprit, "shift_seconds": shift,
+    report.update({"direction": direction, "culprit_activity": culprit, "shift_seconds": shift,
                    "n_corrected": int(in_block.sum()), "backward_after": backward_after,
                    "status": "repaired"})
     return events, report, change_log
