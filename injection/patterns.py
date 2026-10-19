@@ -60,8 +60,8 @@ def validate_object_clones(objects_df, gt_log):
 
 
 
-def _add_attribute_noise(row, rng, blank_p, round_p):
-    # Blank some attribute values, and drop the last decimal digit of some numeric values
+def _add_attribute_noise(row, rng, blank_p, round_p, round_decimals):
+    # Blank some attribute values, and round some numeric values to `round_decimals` decimals
     changed = {}
     for col in row.index:
         if col in ("ocel:oid", "ocel:type") or pd.isna(row[col]):
@@ -75,20 +75,38 @@ def _add_attribute_noise(row, rng, blank_p, round_p):
                 value = float(text)
             except ValueError:
                 continue
-            decimals = len(text.split(".")[1]) if "." in text else 0
-            if decimals > 0:
-                rounded = round(value, decimals - 1)
-                if rounded != value:
-                    changed[col] = {"old": text, "new": str(rounded)}
-                    row[col] = str(rounded)
+            rounded = round(value, round_decimals)
+            if rounded != value:
+                changed[col] = {"old": text, "new": str(rounded)}
+                row[col] = str(rounded) if isinstance(row[col], str) else rounded
     return changed
 
 
-def inject_object_clones(ocel, object_type, severity, seed, gt_log,
-                         o2o_move_p=0.5, blank_p=0.3, round_p=0.3):
+def inject_attribute_noise(ocel, object_type, seed, gt_log, blank_p=0.3, round_p=0.3, round_decimals=4):
+#    Data-entry noise on every object of a type (originals, clones and untouched objects alike):
+#    each attribute value is blanked with blank_p, otherwise rounded with round_p. Drawn
+#    independently per record, so noise does not mark clones.
+
+    rng = random.Random(seed)
+    objects_df = ocel.objects.copy()
+    gt_log.record("attribute_noise", "settings", object_type,
+                  {"seed": seed, "attribute_blank_p": blank_p, "attribute_round_p": round_p,
+                   "round_decimals": round_decimals,
+                   "applies_to": f"every {object_type} record, independently"})
+
+    for idx in objects_df.index[objects_df["ocel:type"] == object_type]:
+        row = objects_df.loc[idx].copy()
+        changed = _add_attribute_noise(row, rng, blank_p, round_p, round_decimals)
+        if changed:
+            objects_df.loc[idx] = row
+            gt_log.record("attribute_noise", "attributes_changed", row["ocel:oid"], {"changes": changed})
+    return objects_df
+
+
+def inject_object_clones(ocel, object_type, severity, seed, gt_log, o2o_move_p=0.5):
 #    Records an object a second time under a new ID, as if a second system had logged it.
-#    1 to n-1 of its event links and each of its O2O links (with o2o_move_p) move to the clone,
-#    and the clone's attributes get some noise (blanked values, one decimal digit dropped).
+#    The clone starts as an exact copy; 1 to n-1 of the event links and each O2O link
+#    (with o2o_move_p) move to the clone. Attribute noise is added later by inject_attribute_noise.
 
     rng = random.Random(seed)
     objects_df = ocel.objects.copy()
@@ -99,8 +117,7 @@ def inject_object_clones(ocel, object_type, severity, seed, gt_log,
     gt_log.record("object_clones", "settings", object_type,
                   {"severity": severity, "seed": seed,
                    "e2o_moved": "random 1 to n-1 of the object's n event links",
-                   "o2o_move_p": o2o_move_p, "attribute_blank_p": blank_p,
-                   "attribute_round_p": round_p, "rounding": "drop the last decimal digit"})
+                   "o2o_move_p": o2o_move_p})
 
     eligible = objects_df[objects_df["ocel:type"] == object_type]
     n_to_clone = max(1, int(len(eligible) * severity))
@@ -118,10 +135,8 @@ def inject_object_clones(ocel, object_type, severity, seed, gt_log,
 
         clone_row = objects_df.loc[row_of[original_id]].copy()
         clone_row["ocel:oid"] = clone_id
-        changed = _add_attribute_noise(clone_row, rng, blank_p, round_p)
         new_objects.append(clone_row)
-        gt_log.record("object_clones", "clone_created", original_id,
-                      {"clone_id": clone_id, "attributes_changed": changed})
+        gt_log.record("object_clones", "clone_created", original_id, {"clone_id": clone_id})
 
         # Event links: move 1 to n-1, so both IDs keep at least one
         rows = sorted(e2o_rows.get(original_id, []))

@@ -4,7 +4,7 @@ import pandas as pd
 from injection.ground_truth_log import GroundTruthLog
 from injection.pseudonymise import pseudonymise_ids
 from injection.patterns import (
-    inject_object_clones, inject_missing_e2o, inject_incorrect_o2o,
+    inject_object_clones, inject_attribute_noise, inject_missing_e2o, inject_incorrect_o2o,
     inject_timestamp_drift, inject_label_distortion
 )
 
@@ -24,6 +24,9 @@ def build_messy_dataset(ocel, severity, seed):
 
     state.objects, state.relations, state.o2o = inject_object_clones(
         state, object_type="SteelSheet", severity=severity, seed=seed, gt_log=gt_log
+    )
+    state.objects = inject_attribute_noise(
+        state, object_type="SteelSheet", seed=seed, gt_log=gt_log
     )
     state.relations = inject_missing_e2o(
         state, activity_filter="AssembleHinge", severity=severity, seed=seed, gt_log=gt_log

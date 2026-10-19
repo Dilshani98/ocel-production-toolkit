@@ -65,16 +65,17 @@ def check_no_dangling_ids(events_df, objects_df, relations_df, o2o_df):
     assert o2o_df["ocel:oid_2"].isin(objects).all(), "o2o target is unknown"
 
 
-def pseudonymise_ids(state, seed, gt_log):
-    # Renames every event and object ID by shuffling the numbers within its prefix, so that
-    # ID text and numbers carry no information (clones look like any other object, and event
-    # and object IDs no longer share numbers). The ground truth is rewritten to the new IDs and
-    # gets one "ids_renamed" record mapping clean-log IDs to the new IDs.
+def pseudonymise_ids(state, seed, gt_log, event_prefix="e_"):
+    # Renames every ID so that ID text and numbers carry no information. Objects: numbers are
+    # shuffled within their type's prefix (clones look like any other object). Events: all get
+    # one prefix and shuffled numbers, so an event ID does not name its activity or its outcome.
+    # The ground truth is rewritten to the new IDs and gets one "ids_renamed" record mapping
+    # clean-log IDs to the new IDs.
     rng = random.Random(seed)
     clone_ids = {c["details"]["clone_id"] for c in gt_log.changes if c["change_type"] == "clone_created"}
 
     obj_map = _object_id_map(state.objects, rng)
-    ev_map = _prefix_map(state.events["ocel:eid"], rng)
+    ev_map = _shuffled_numbers(sorted(map(str, state.events["ocel:eid"])), event_prefix, rng, [])
     assert len(set(obj_map.values())) == len(obj_map), "object renaming is not one-to-one"
     assert len(set(ev_map.values())) == len(ev_map), "event renaming is not one-to-one"
 

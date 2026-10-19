@@ -1,8 +1,9 @@
 import os, sys, json
 import pandas as pd
 
-# Checks that clones cannot be found from ID text, ID numbers or row position,
-# and that no ID is dangling. Ground truth is used here (test code) only to know which IDs are clones.
+# Checks that clones cannot be found from ID text, ID numbers, row position, missing attributes or
+# decimal precision, that event IDs do not name the activity, and that no ID is dangling.
+# Ground truth is used here (test code) only to know which IDs are clones.
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data", "messy")
 TAGS = sys.argv[1:] or ["sev0_05", "sev0_15", "sev0_3"]
@@ -25,8 +26,8 @@ def number(ids):
 
 
 def check(tag):
-    ev = pd.read_csv(os.path.join(DATA, f"messy_events_{tag}.csv"), usecols=["record_id"])
-    ob = pd.read_csv(os.path.join(DATA, f"messy_objects_{tag}.csv"), low_memory=False)
+    ev = pd.read_csv(os.path.join(DATA, f"messy_events_{tag}.csv"), usecols=["record_id", "activity_name"])
+    ob = pd.read_csv(os.path.join(DATA, f"messy_objects_{tag}.csv"), dtype=str)   # keep values as written
     rel = pd.read_csv(os.path.join(DATA, f"messy_relations_{tag}.csv"))
     o2o = pd.read_csv(os.path.join(DATA, f"messy_o2o_{tag}.csv"))
     gt = json.load(open(os.path.join(DATA, f"ground_truth_{tag}.json")))
@@ -90,19 +91,38 @@ def check(tag):
     results["objects whose events share a number"] = round(shared, 4)
     assert shared < 0.01, f"{shared:.1%} of objects have events sharing a number"
 
-    # Diagnostic only (no assert): do attribute values single out clones?
-    attrs = [col for col in ob.columns if col not in ("item_id", "item_category")]
-    typ_rows = ob[ob["item_category"].isin(clone_types)]
-    used = [col for col in attrs if typ_rows[col].notna().any()]
-    blank = typ_rows[used].isna().any(axis=1)
-    results["share with a blank attribute (clones / real)"] = (
-        round(blank[is_clone].mean(), 3), round(blank[~is_clone & ob["item_category"].isin(clone_types)].mean(), 3))
+    # 5b. Event IDs do not name the activity: one shared prefix, and no activity word in any ID
+    prefixes = set(ev["record_id"].str.replace(r"\d+$", "", regex=True))
+    assert len(prefixes) == 1, f"event IDs use {len(prefixes)} prefixes: {sorted(prefixes)[:5]}"
+    words = {w.lower() for label in ev["activity_name"].unique()
+             for w in pd.Series([label]).str.findall(r"[A-Z]?[a-z]+")[0] if len(w) >= 3}
+    ids_lower = ev["record_id"].str.lower()
+    named = sorted(w for w in words if ids_lower.str.contains(w, regex=False).any())
+    assert not named, f"event IDs contain activity words: {named}"
+
+    # 7. Attribute noise: missingness and decimal precision do not separate clones from real objects
+    for typ in clone_types:
+        rows = ob[ob["item_category"] == typ]
+        clone_rows = rows["item_id"].isin(clones).values
+        used = [col for col in rows.columns if col not in ("item_id", "item_category") and rows[col].notna().any()]
+        a = auc(rows[used].isna().sum(axis=1).values, clone_rows)
+        results[f"{typ} missing-attribute AUC"] = round(a, 3)
+        assert 0.4 <= a <= 0.6, f"{typ}: number of blank attributes separates clones (AUC {a:.3f})"
+        for col in used:
+            present = rows[col].notna().values
+            if not pd.to_numeric(rows.loc[present, col], errors="coerce").notna().all():
+                continue                                  # not a numeric column
+            decimals = rows.loc[present, col].map(lambda v: len(v.split(".")[1]) if "." in v else 0).values
+            a = auc(decimals, clone_rows[present])
+            results[f"{typ} {col} decimals AUC"] = round(a, 3)
+            assert 0.4 <= a <= 0.6, f"{typ}: decimal precision of {col} separates clones (AUC {a:.3f})"
 
     # 6. Ground-truth format: one rename table and the clone settings
     renames = [g for g in gt if g["change_type"] == "ids_renamed"]
     assert len(renames) == 1, "expected exactly one ids_renamed record"
-    assert any(g["change_type"] == "settings" and g["pattern"] == "object_clones" for g in gt), \
-        "clone settings missing from ground truth"
+    for pattern in ("object_clones", "attribute_noise"):
+        assert any(g["change_type"] == "settings" and g["pattern"] == pattern for g in gt), \
+            f"{pattern} settings missing from ground truth"
     return results
 
 
