@@ -1,5 +1,5 @@
 import pm4py
-import sys, os
+import sys, os, tempfile
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from injection.run_injection import build_messy_dataset, save_messy_dataset, to_fragmented_format
@@ -26,14 +26,15 @@ overlap = timestamp_ids & label_ids
 
 print(f"Events with BOTH timestamp drift AND label distortion: {len(overlap)}")
 
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "messy")
-
 events_out, objects_out, relations_out, o2o_out = to_fragmented_format(
     state.events, state.objects, state.relations, state.o2o
 )
 
-save_messy_dataset(events_out, objects_out, relations_out, o2o_out,
-                   gt_log, OUTPUT_DIR, severity=0.15)
+# Save to a temporary folder only, so data/messy is never overwritten (use generate_datasets.py for that)
+with tempfile.TemporaryDirectory() as tmp:
+    save_messy_dataset(events_out, objects_out, relations_out, o2o_out,
+                       gt_log, tmp, severity=0.15)
+    print("Saved files:", sorted(os.listdir(tmp)))
 
 # quick self-checks
 print(events_out.columns.tolist())
