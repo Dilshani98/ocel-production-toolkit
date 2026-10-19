@@ -2,6 +2,7 @@ import pm4py
 import os
 import pandas as pd
 from injection.ground_truth_log import GroundTruthLog
+from injection.pseudonymise import pseudonymise_ids
 from injection.patterns import (
     inject_object_clones, inject_missing_e2o, inject_incorrect_o2o,
     inject_timestamp_drift, inject_label_distortion
@@ -21,7 +22,7 @@ def build_messy_dataset(ocel, severity, seed):
     gt_log = GroundTruthLog()
     state = OCELState(ocel)
 
-    state.objects, state.relations = inject_object_clones(
+    state.objects, state.relations, state.o2o = inject_object_clones(
         state, object_type="SteelSheet", severity=severity, seed=seed, gt_log=gt_log
     )
     state.relations = inject_missing_e2o(
@@ -36,6 +37,9 @@ def build_messy_dataset(ocel, severity, seed):
     state.events = inject_label_distortion(
         state, activity_filter="HeatSteelSheet", severity=severity, seed=seed, gt_log=gt_log
     )
+
+    # Last step: rename all IDs so ID text and numbers give nothing away
+    state = pseudonymise_ids(state, seed=seed, gt_log=gt_log)
 
     return state, gt_log
 

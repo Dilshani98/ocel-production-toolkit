@@ -60,41 +60,93 @@ def validate_object_clones(objects_df, gt_log):
 
 
 
-def inject_object_clones(ocel, object_type, severity, seed, gt_log):
-#    Duplicates objects under a new ID, then reassigns some of their event-object relations to the new ID.
+def _add_attribute_noise(row, rng, blank_p, round_p):
+    # Blank some attribute values, and drop the last decimal digit of some numeric values
+    changed = {}
+    for col in row.index:
+        if col in ("ocel:oid", "ocel:type") or pd.isna(row[col]):
+            continue
+        if rng.random() < blank_p:
+            changed[col] = {"old": str(row[col]), "new": None}
+            row[col] = None
+        elif rng.random() < round_p:
+            text = str(row[col])
+            try:
+                value = float(text)
+            except ValueError:
+                continue
+            decimals = len(text.split(".")[1]) if "." in text else 0
+            if decimals > 0:
+                rounded = round(value, decimals - 1)
+                if rounded != value:
+                    changed[col] = {"old": text, "new": str(rounded)}
+                    row[col] = str(rounded)
+    return changed
+
+
+def inject_object_clones(ocel, object_type, severity, seed, gt_log,
+                         o2o_move_p=0.5, blank_p=0.3, round_p=0.3):
+#    Records an object a second time under a new ID, as if a second system had logged it.
+#    1 to n-1 of its event links and each of its O2O links (with o2o_move_p) move to the clone,
+#    and the clone's attributes get some noise (blanked values, one decimal digit dropped).
 
     rng = random.Random(seed)
     objects_df = ocel.objects.copy()
     relations_df = ocel.relations.copy()
+    o2o_df = ocel.o2o.copy()
     existing_ids = set(objects_df["ocel:oid"])
+
+    gt_log.record("object_clones", "settings", object_type,
+                  {"severity": severity, "seed": seed,
+                   "e2o_moved": "random 1 to n-1 of the object's n event links",
+                   "o2o_move_p": o2o_move_p, "attribute_blank_p": blank_p,
+                   "attribute_round_p": round_p, "rounding": "drop the last decimal digit"})
 
     eligible = objects_df[objects_df["ocel:type"] == object_type]
     n_to_clone = max(1, int(len(eligible) * severity))
     targets = rng.sample(list(eligible["ocel:oid"]), n_to_clone)
+
+    e2o_rows = relations_df.groupby("ocel:oid").groups
+    o2o_source_rows = o2o_df.groupby("ocel:oid").groups
+    o2o_target_rows = o2o_df.groupby("ocel:oid_2").groups
+    row_of = dict(zip(objects_df["ocel:oid"], objects_df.index))
 
     new_objects = []
     for original_id in targets:
         clone_id = _generate_alias_id(rng, object_type, existing_ids)
         existing_ids.add(clone_id)
 
-        original_row = objects_df[objects_df["ocel:oid"] == original_id].iloc[0].copy()
-        original_row["ocel:oid"] = clone_id
-        new_objects.append(original_row)
-        gt_log.record("object_clones", "clone_created", original_id, {"clone_id": clone_id})
+        clone_row = objects_df.loc[row_of[original_id]].copy()
+        clone_row["ocel:oid"] = clone_id
+        changed = _add_attribute_noise(clone_row, rng, blank_p, round_p)
+        new_objects.append(clone_row)
+        gt_log.record("object_clones", "clone_created", original_id,
+                      {"clone_id": clone_id, "attributes_changed": changed})
 
-        mask = relations_df["ocel:oid"] == original_id
-        related_rows = relations_df[mask].index.tolist()
-        rng.shuffle(related_rows)
-        half = len(related_rows) // 2
-        reassign_to_clone = related_rows[:half]
+        # Event links: move 1 to n-1, so both IDs keep at least one
+        rows = sorted(e2o_rows.get(original_id, []))
+        if len(rows) >= 2:
+            to_move = rng.sample(rows, rng.randint(1, len(rows) - 1))
+            relations_df.loc[to_move, "ocel:oid"] = clone_id
+            for idx in to_move:
+                gt_log.record("object_clones", "relation_reassigned", original_id,
+                              {"clone_id": clone_id, "event_id": relations_df.loc[idx, "ocel:eid"]})
 
-        relations_df.loc[reassign_to_clone, "ocel:oid"] = clone_id
-        for idx in reassign_to_clone:
-            gt_log.record("object_clones", "relation_reassigned", original_id,
-                           {"clone_id": clone_id, "event_id": relations_df.loc[idx, "ocel:eid"]})
+        # Object-to-object links, in either direction
+        for column, groups in (("ocel:oid", o2o_source_rows), ("ocel:oid_2", o2o_target_rows)):
+            for idx in sorted(groups.get(original_id, [])):
+                if rng.random() < o2o_move_p:
+                    o2o_df.loc[idx, column] = clone_id
+                    other = o2o_df.loc[idx, "ocel:oid_2" if column == "ocel:oid" else "ocel:oid"]
+                    gt_log.record("object_clones", "o2o_reassigned", original_id,
+                                  {"clone_id": clone_id, "other_id": other,
+                                   "qualifier": o2o_df.loc[idx, "ocel:qualifier"],
+                                   "clone_side": "source" if column == "ocel:oid" else "target"})
 
+    # Clones are appended here; pseudonymise_ids() later sorts objects by their new IDs,
+    # so the clone rows do not stay at the end of the file.
     objects_df = pd.concat([objects_df, pd.DataFrame(new_objects)], ignore_index=True)
-    return objects_df, relations_df
+    return objects_df, relations_df, o2o_df
 
 
 
