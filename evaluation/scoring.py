@@ -8,7 +8,6 @@ the output uses for them. Output tables use cluster IDs for objects.
 """
 import json
 from dataclasses import dataclass, field
-from itertools import combinations
 
 import pandas as pd
 
@@ -180,17 +179,29 @@ def score_timestamps(recon, messy, truth):
 
 
 def score_identity(recon, truth):
+    """Pairwise identity scores. Pairs are counted, not listed (a cluster of n gives n(n-1)/2 pairs),
+    so very large clusters (e.g. a naive baseline merging thousands of objects) stay cheap."""
     clusters = recon.get("clusters")
-    predicted, impure = set(), 0
+    n_predicted = correct = impure = 0
     if clusters is not None and len(clusters):
-        for _, group in clusters.groupby("_cluster_id"):
-            ids = sorted(set(group["_item_id"]))
-            predicted |= {frozenset(p) for p in combinations(ids, 2)}
-            impure += len({truth.true_id.get(i, ("?", i)) for i in ids}) > 1
-    result = prf(predicted, truth.clone_pairs)
-    result.update({"false_merges": len(predicted - truth.clone_pairs),
-                   "missed_merges": len(truth.clone_pairs - predicted), "impure_clusters": impure})
-    return result
+        c = clusters.drop_duplicates("_item_id")
+        sizes = c.groupby("_cluster_id").size()
+        n_predicted = int((sizes * (sizes - 1) // 2).sum())
+        cluster_of = dict(zip(c["_item_id"], c["_cluster_id"]))
+        correct = sum(1 for pair in truth.clone_pairs
+                      if len({cluster_of.get(i, ("none", i)) for i in pair}) == 1)
+        real = c["_item_id"].map(lambda i: truth.true_id.get(i, "?" + str(i)))
+        impure = int((real.groupby(c["_cluster_id"]).nunique() > 1).sum())
+    n_true = len(truth.clone_pairs)
+    if n_predicted == 0 and n_true == 0:
+        p = r = f1 = 1.0
+    else:
+        p = correct / n_predicted if n_predicted else 0.0
+        r = correct / n_true if n_true else 0.0
+        f1 = 2 * p * r / (p + r) if p + r else 0.0
+    return {"precision": p, "recall": r, "f1": f1, "n_predicted": n_predicted, "n_true": n_true,
+            "n_correct": correct, "false_merges": n_predicted - correct,
+            "missed_merges": n_true - correct, "impure_clusters": impure}
 
 
 def _with_affected(result, predicted, damaged):
