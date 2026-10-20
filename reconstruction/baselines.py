@@ -7,6 +7,7 @@ B1: hygiene only. Labels, roles, link types and object types are compared by a n
 B2: B1 plus a naive identity rule: objects of the same type with an identical attribute record
     (a blank counts as a value; all-blank records never merge) are merged, but only when the group
     has at most `max_group` members (None = no limit).
+B3: toolkit blocking with a naive decision (closest in time, one-to-one); shows what Fellegi-Sunter adds.
 """
 import re
 import pandas as pd
@@ -89,3 +90,11 @@ def apply_b2(tables, max_group=2):
         report[f"duplicates_after_merge_{kind}"] = before - len(out[kind])
     out["clusters"] = pd.DataFrame({"_item_id": list(canonical), "_cluster_id": list(canonical.values())})
     return out, report
+
+
+def apply_b3(tables):
+    """B3: the toolkit's label cleaning, timestamp repair and identity blocking, but no Fellegi-Sunter:
+    each fragment takes its closest-in-time candidate, one-to-one, with no thresholds."""
+    from reconstruction.pipeline import run_toolkit
+    out, report, _ = run_toolkit(tables, identity_decision="closest")
+    return out, {"merged_pairs": report["identity"]["merged_pairs"]}
