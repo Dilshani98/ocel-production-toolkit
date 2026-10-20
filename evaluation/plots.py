@@ -26,11 +26,12 @@ def plot_by_system(table, systems, colours, path, title):
             vals = [sel[sel.severity == s]["value"].iloc[0] for s in severities]
             xs = [x + (i - (len(systems) - 1) / 2) * width for x in range(len(severities))]
             bars = ax.bar(xs, vals, width, color=colour, edgecolor="black", linewidth=0.4, label=system)
-            ax.bar_label(bars, fmt="%.2f", fontsize=6.5, padding=1)
+            crowded = len(systems) > 3
+            ax.bar_label(bars, fmt="%.2f", fontsize=6 if crowded else 6.5, padding=1, rotation=90 if crowded else 0)
         ax.set_title(label, fontsize=10)
         ax.set_xticks(range(len(severities)))
         ax.set_xticklabels([f"{s:.0%}" for s in severities])
-        ax.set_ylim(0, 1.12)
+        ax.set_ylim(0, 1.2 if len(systems) > 3 else 1.12)
     for ax in axes[:, 0]:
         ax.set_ylabel("Score (1.0 = perfect)")
     for ax in axes[1]:
