@@ -1,0 +1,13 @@
+{
+  "frozen_at": "2026-10-20T17:26:48",
+  "note": "Stage 8 design frozen after unit tests passed, before any real-data run. No rule may change after this.",
+  "files": {
+    "reconstruction/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reconstruction/baselines.py": "01630f53df408177618cd3fd1a15aca15b429e3200e0d79bec1ca5f8aaf94c46",
+    "reconstruction/cleaning.py": "7c2aee3495028417ef95e7968f17b20cdfc8d733e49adb7c148a5f82369bf3c1",
+    "reconstruction/identity.py": "41e66c6e5cc064449ebfbc4db2e21442ef15e992afb18641133dca4492fc8093",
+    "reconstruction/mapping.py": "7547aba0640eebbbcd32ac710f5bc3596a93a85b6fe3d07d1e63c84372e55829",
+    "reconstruction/pipeline.py": "e02ebf4121d50d52b820d8764115e636691f8c15541b5888913ee7798c1a8194",
+    "reconstruction/profiling.py": "e88f475718b140d76626cb4801bedff7a432469e95f07883b29a96fce2fa1f05"
+  }
+}
