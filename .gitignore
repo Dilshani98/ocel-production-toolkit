@@ -31,3 +31,6 @@ Reference/
 
 # Scores, tables and figures from experiments
 results/
+
+# Extra seeds for robustness runs
+data/seeds/
