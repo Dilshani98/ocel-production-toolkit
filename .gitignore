@@ -23,3 +23,14 @@ Thumbs.db
 
 data/messy/*.csv
 data/messy/*.json
+
+# Generated experiment results
+tests/*.csv
+
+Reference/
+
+# Scores, tables and figures from experiments
+results/
+
+# Extra seeds for robustness runs
+data/seeds/
