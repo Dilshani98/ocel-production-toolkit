@@ -1,3 +1,18 @@
+"""Missing E2O recovery (stage 9): finds events that lost a link to an object and adds the link back
+only when the evidence leaves a single answer. Prefers a missed link to a wrong one.
+
+Uses only the (cleaned) messy tables. No type names, activity names or ID text are used.
+1. Expected types per activity = its most common set of linked object types. Trusted only if that set
+   covers at least pattern_ratio times as many events as the next most common set.
+2. Missing link = an event of a trusted activity that has no object of an expected type.
+3. R1 (dominant object): if one object appears in at least dominant_share of the activity's events that
+   link that type, add it to the events missing that type.
+4. R2 (doubly unique orphan): orphans are objects of the type whose usual lifecycle contains the activity
+   but who lack it. An orphan "fits" an event if putting the event into its timeline keeps the usual order
+   and every adjacent gap inside the range seen in complete objects. Add only if the event fits exactly one
+   orphan and that orphan fits exactly one missing event.
+Everything else is listed as a possible link and not added.
+"""
 from dataclasses import dataclass, asdict
 
 import numpy as np
