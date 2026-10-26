@@ -15,5 +15,22 @@
     "reconstruction/profiling.py": "711488a254964718b5e10c2d6bba0ef5a9c8dd766b933c32ef35c838c6e56358",
     "reconstruction/relations.py": "8001858048c46a7e469d82d5956b2ba0775696f9fcc0febd2e9e574f55edd95c",
     "reconstruction/toolkit.py": "ccc0db2100aaa1fd20a16f55681630387f7d74ef33ba320439e7cb1d542b5f0f"
-  }
+  },
+  "amendments": [
+    {
+      "date": "2026-10-26T23:37:45",
+      "approved_by": "student, 26 Oct 2026",
+      "reason": "Run 1 failed its round-trip checks: pm4py writers and readers drop objects with no event-to-object link (allowed by OCEL 2.0). export.write() now adds them back to the file in every format, and export.read() adds back objects dropped by pm4py reader. JSON attribute values stay numeric (the specification does not require strings). Recorded before the single re-run. Unit tests: 9, all passing; mutation checks done.",
+      "files_changed": [
+        "reconstruction/export.py",
+        "reconstruction/tests/test_export.py"
+      ],
+      "files": {
+        "reconstruction/export.py": "8fdf2ca3835dac13792a9230fcfbf58d8cf1a7642f17b2a183050141aaab266f"
+      },
+      "previous": {
+        "reconstruction/export.py": "67ab8a1cad1682d7826b395ad0387516436bf8b328e0378535c330c71810153e"
+      }
+    }
+  ]
 }
