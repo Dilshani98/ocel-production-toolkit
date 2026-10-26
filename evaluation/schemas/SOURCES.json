@@ -1,5 +1,5 @@
 {
-  "note": "Supporting check only. The OCEL 2.0 standard site (ocel-standard.org) publishes the specification as a document and no machine-readable schema files. These are the schema files distributed with the PM4Py reference implementation (test data, AGPL-3.0); they are not redistributed here. evaluation/run_stage11.py downloads them from the pinned commit and checks the SHA-256 before use. The primary validity evidence is the 24 OCEL 2.0 relational constraints.",
+  "note": "Record only: neither pm4py schema file is used. The OCEL 2.0 standard site (ocel-standard.org) publishes the specification as a document and no machine-readable schema files. The XSD rejects the published sOCEL 2.0 file itself; the JSON schema is stricter than the specification. Validity evidence is the 24 OCEL 2.0 relational constraints, SQLite foreign-key enforcement, and a round trip through pm4py. The files are not redistributed (pm4py is AGPL-3.0).",
   "licence": "AGPL-3.0 (pm4py)",
   "xml": {
     "file": "ocel2-validation.xsd",
@@ -11,7 +11,9 @@
     "url": "https://raw.githubusercontent.com/process-intelligence-solutions/pm4py/9521745bdbe17cc574f417a850ff6d78b1ffbfcf/tests/input_data/ocel/ocel2-validation.xsd",
     "downloaded": "2026-10-26",
     "bytes": 5439,
-    "sha256": "9cf72a7036ed8578792db83efdd7d6598beb4db3b085735391c262e6dc544a4c"
+    "sha256": "9cf72a7036ed8578792db83efdd7d6598beb4db3b085735391c262e6dc544a4c",
+    "used": false,
+    "finding": "Tested 26 Oct 2026 as a control before any toolkit output: this XSD rejects the clean log export and also the published sOCEL 2.0 file socel2_hinge.xml itself (307,912 errors; it treats attribute names as unique across all types and expects a different element order). A schema that rejects a log known to be valid is not trustworthy here, so it is not used. Kept as a record."
   },
   "json": {
     "file": "schema_ocel2.json",
@@ -23,6 +25,8 @@
     "url": "https://raw.githubusercontent.com/process-intelligence-solutions/pm4py/9521745bdbe17cc574f417a850ff6d78b1ffbfcf/tests/input_data/ocel/schema_ocel2.json",
     "downloaded": "2026-10-26",
     "bytes": 4387,
-    "sha256": "55508e4e2b016367f613965b12d131af99eeb3bf9922c45e66b5c189acc20f34"
+    "sha256": "55508e4e2b016367f613965b12d131af99eeb3bf9922c45e66b5c189acc20f34",
+    "used": false,
+    "finding": "Tested 26 Oct 2026. Accepts the clean log export without attributes, but rejects exports with numeric attribute values written as JSON numbers (\"0.0067 is not of type string\"). The OCEL 2.0 specification (section 8, JSON format) defines attributes as objects with name and value properties and declares their types (string, time, integer, float, boolean) on the event and object types; it does not require values to be strings (its example happens to write them as strings). The schema is therefore stricter than the specification, so it is not used. Kept as a record."
   }
 }
