@@ -31,6 +31,20 @@
       "previous": {
         "reconstruction/export.py": "67ab8a1cad1682d7826b395ad0387516436bf8b328e0378535c330c71810153e"
       }
+    },
+    {
+      "date": "2026-10-27T00:08:29",
+      "approved_by": "student, 27 Oct 2026",
+      "reason": "Message text only: the refusal for an object whose type has no events now says what is wrong and what to do. Code is otherwise unchanged (abstract syntax trees equal once string text is ignored). Unit tests: 9, all passing. No re-run needed: no export result depends on the message text.",
+      "files_changed": [
+        "reconstruction/export.py"
+      ],
+      "files": {
+        "reconstruction/export.py": "79c22c599601b92a4153a275f3971fb49e07b34ddbf240e481a20d31894d9d80"
+      },
+      "previous": {
+        "reconstruction/export.py": "8fdf2ca3835dac13792a9230fcfbf58d8cf1a7642f17b2a183050141aaab266f"
+      }
     }
   ]
 }

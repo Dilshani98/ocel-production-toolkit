@@ -108,7 +108,7 @@ def restore_isolated_objects(tables, path, fmt):
             for _, row in missing.iterrows():
                 t = row["_item_type"]
                 if t not in type_map:
-                    raise ValueError(f"object {row['_item_id']!r} has type {t!r}, which no written object has")
+                    raise ValueError(f"Cannot export object {row['_item_id']!r}: no object of type {t!r} has an event, so pm4py writes no declaration for type {t!r} and the object would be lost. To export, give at least one object of type {t!r} an event-to-object link, or remove the objects of type {t!r} from the input.")
                 table = f"object_{type_map[t]}"
                 attrs = _attributes(row)
                 cols = {r[1] for r in cur.execute(f'PRAGMA table_info("{table}")')}
@@ -133,7 +133,7 @@ def restore_isolated_objects(tables, path, fmt):
         for _, row in missing.iterrows():
             t = row["_item_type"]
             if t not in types:
-                raise ValueError(f"object {row['_item_id']!r} has type {t!r}, which no written object has")
+                raise ValueError(f"Cannot export object {row['_item_id']!r}: no object of type {t!r} has an event, so pm4py writes no declaration for type {t!r} and the object would be lost. To export, give at least one object of type {t!r} an event-to-object link, or remove the objects of type {t!r} from the input.")
             declared = {a["name"]: a["type"] for a in types[t]["attributes"]}
             attrs = _attributes(row)
             for name in attrs.keys() - declared.keys():
@@ -157,7 +157,7 @@ def restore_isolated_objects(tables, path, fmt):
         for _, row in missing.iterrows():
             t = row["_item_type"]
             if t not in types:
-                raise ValueError(f"object {row['_item_id']!r} has type {t!r}, which no written object has")
+                raise ValueError(f"Cannot export object {row['_item_id']!r}: no object of type {t!r} has an event, so pm4py writes no declaration for type {t!r} and the object would be lost. To export, give at least one object of type {t!r} an event-to-object link, or remove the objects of type {t!r} from the input.")
             decl = types[t].find("attributes")
             if decl is None:
                 decl = etree.SubElement(types[t], "attributes")
