@@ -34,3 +34,7 @@ results/
 
 # Extra seeds for robustness runs
 data/seeds/
+
+# pm4py schema files (AGPL-3.0): downloaded by run_stage11.py, not redistributed; only their sources are tracked
+evaluation/schemas/*
+!evaluation/schemas/SOURCES.json

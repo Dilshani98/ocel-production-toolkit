@@ -1,0 +1,28 @@
+{
+  "note": "Supporting check only. The OCEL 2.0 standard site (ocel-standard.org) publishes the specification as a document and no machine-readable schema files. These are the schema files distributed with the PM4Py reference implementation (test data, AGPL-3.0); they are not redistributed here. evaluation/run_stage11.py downloads them from the pinned commit and checks the SHA-256 before use. The primary validity evidence is the 24 OCEL 2.0 relational constraints.",
+  "licence": "AGPL-3.0 (pm4py)",
+  "xml": {
+    "file": "ocel2-validation.xsd",
+    "repository": "https://github.com/process-intelligence-solutions/pm4py",
+    "branch": "release",
+    "commit": "9521745bdbe17cc574f417a850ff6d78b1ffbfcf",
+    "path": "tests/input_data/ocel/ocel2-validation.xsd",
+    "file_last_changed_in_commit": "671688effb5ccf01d5653726de6725810333af0a",
+    "url": "https://raw.githubusercontent.com/process-intelligence-solutions/pm4py/9521745bdbe17cc574f417a850ff6d78b1ffbfcf/tests/input_data/ocel/ocel2-validation.xsd",
+    "downloaded": "2026-10-26",
+    "bytes": 5439,
+    "sha256": "9cf72a7036ed8578792db83efdd7d6598beb4db3b085735391c262e6dc544a4c"
+  },
+  "json": {
+    "file": "schema_ocel2.json",
+    "repository": "https://github.com/process-intelligence-solutions/pm4py",
+    "branch": "release",
+    "commit": "9521745bdbe17cc574f417a850ff6d78b1ffbfcf",
+    "path": "tests/input_data/ocel/schema_ocel2.json",
+    "file_last_changed_in_commit": "f663598a0b3d4f8dd8df02091eaa8c25d019056d",
+    "url": "https://raw.githubusercontent.com/process-intelligence-solutions/pm4py/9521745bdbe17cc574f417a850ff6d78b1ffbfcf/tests/input_data/ocel/schema_ocel2.json",
+    "downloaded": "2026-10-26",
+    "bytes": 4387,
+    "sha256": "55508e4e2b016367f613965b12d131af99eeb3bf9922c45e66b5c189acc20f34"
+  }
+}
