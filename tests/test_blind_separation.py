@@ -1,6 +1,6 @@
 import ast, os, re, sys
 
-# Blind separation (CLAUDE.md section 3): toolkit code in reconstruction/ must not import from
+# Blind separation (the project's evaluation rule): toolkit code in reconstruction/ must not import from
 # injection/ or evaluation/, and must not mention ground truth or the clean log. Hard asserts.
 # Also a non-failing report of clean activity or object type names hard-coded in the toolkit.
 
