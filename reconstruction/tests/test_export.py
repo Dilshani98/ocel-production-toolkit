@@ -2,7 +2,7 @@ import os, sys, sqlite3, tempfile
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 import pandas as pd
 from pm4py.objects.ocel.validation import ocel20_rel_validation
-from reconstruction.export import write, read, add_keys, FORMATS
+from reconstruction.export import write, read, add_keys, file_objects, FORMATS
 
 # A tiny log: 3 events, 4 objects of 2 types, 6 event-object links, 2 object-object links, one attribute each.
 
@@ -84,6 +84,43 @@ def test_links_to_unknown_objects_are_refused_in_every_format():
                 except ValueError:
                     continue
                 raise AssertionError(f"{name} link to an unknown object was written as {fmt}")
+
+
+def with_isolated(object_id, object_type, mass):
+    t = tables()
+    t["objects"] = pd.concat([t["objects"], pd.DataFrame(
+        {"_item_id": [object_id], "_item_type": [object_type], "mass": [mass]})], ignore_index=True)
+    return t
+
+
+def test_isolated_objects_are_kept_in_every_format():
+    # Amendment 26 Oct: pm4py drops objects with no event link; OCEL 2.0 allows them, so write() adds them back
+    t = with_isolated("p", "Part", 0.25)
+    with tempfile.TemporaryDirectory() as d:
+        for fmt in FORMATS:
+            path = write(t, os.path.join(d, f"log.{fmt}"), fmt)
+            in_file = file_objects(path, fmt).set_index("_item_id")          # the file itself, no pm4py reader
+            assert "p" in in_file.index and in_file.at["p", "_item_type"] == "Part", f"{fmt}: not in the file"
+            assert float(in_file.at["p", "mass"]) == 0.25, f"{fmt}: attribute not in the file"
+            back = read(path, fmt)
+            objs = back["objects"].set_index("_item_id")
+            assert "p" in objs.index, f"{fmt}: the isolated object was dropped"
+            assert objs.at["p", "_item_type"] == "Part", fmt
+            assert float(objs.at["p", "mass"]) == 0.25, f"{fmt}: attribute value lost"
+            assert len(back["objects"]) == 5 and triples(back) == triples(t), fmt
+        ok, bad = ocel20_rel_validation.apply(os.path.join(d, "log.sqlite"))
+        assert not bad, f"keyed SQLite with a restored object fails: {bad}"
+
+
+def test_isolated_object_of_an_unwritten_type_is_refused():
+    t = with_isolated("q", "Pin", 0.1)               # no linked object is a Pin: no type declaration to use
+    with tempfile.TemporaryDirectory() as d:
+        for fmt in FORMATS:
+            try:
+                write(t, os.path.join(d, f"log.{fmt}"), fmt)
+            except ValueError:
+                continue
+            raise AssertionError(f"{fmt}: an object of an undeclared type was written or silently dropped")
 
 
 def test_unknown_format_is_rejected():
