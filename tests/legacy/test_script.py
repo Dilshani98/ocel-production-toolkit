@@ -1,13 +1,13 @@
 import pm4py
 import sys, os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from injection.ground_truth_log import GroundTruthLog
 from injection.patterns import inject_object_clones, validate_object_clones, inject_missing_e2o, inject_timestamp_drift, inject_incorrect_o2o, inject_label_distortion
 
 
 #ocel = pm4py.read_ocel2_xml("socel2_hinge.xml")
 
-ocel = pm4py.read_ocel2_xml(os.path.join(os.path.dirname(__file__), "..", "socel2_hinge.xml")) #debug the import error
+ocel = pm4py.read_ocel2_xml(os.path.join(os.path.dirname(__file__), "..", "..", "socel2_hinge.xml")) #debug the import error
 
 # --------------------Checking the object clone injection and validation:
 

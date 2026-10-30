@@ -1,13 +1,13 @@
 import pm4py
 import sys, os, tempfile
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from injection.run_injection import build_messy_dataset, save_messy_dataset, to_fragmented_format
 
 
 # ocel = pm4py.read_ocel2_xml("socel2_hinge.xml")
 
-ocel = pm4py.read_ocel2_xml(os.path.join(os.path.dirname(__file__), "..", "socel2_hinge.xml")) #debug the import error
+ocel = pm4py.read_ocel2_xml(os.path.join(os.path.dirname(__file__), "..", "..", "socel2_hinge.xml")) #debug the import error
 
 state, gt_log = build_messy_dataset(ocel, severity=0.15, seed=42)
 
