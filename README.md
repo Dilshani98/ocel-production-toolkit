@@ -38,7 +38,20 @@ On Windows, install into a folder with a short path (for example `C:\venvs\ocel`
 paths, and with a long folder name the install fails with "No such file or directory" unless Windows long
 path support is turned on.
 
+## Try it on the example
+
+From the project root, on a small made-up factory that ships with the repository:
+
+```bash
+python -m reconstruction.reconstruct --config examples/synthetic/mapping.json --out output
+```
+
+It repairs 5 labels, 40 timestamps, 24 duplicated objects, 18 missing links and 12 wrong object-to-object links.
+The example is deliberately easy; see `examples/README.md`.
+
 ## Use the toolkit on your own data
+
+The `"folder"` in the config is read relative to the folder you run the command from.
 
 ```bash
 python -m reconstruction.reconstruct --config mapping.json --out output_folder --formats sqlite xml json
@@ -62,6 +75,29 @@ The output folder then holds:
 | `repair_report.md` / `.json` | what was changed and how often, and what was left alone and why |
 | `changes_*.csv` | every single change: labels, timestamps, merged objects, added links, repaired O2O links |
 | `review_*.csv` | decisions the toolkit did not make (possible matches, links it could not place), each with a reason |
+
+### The command with checks, health check and dry run
+
+`python -m reconstruction.cli` takes the same config and writes the same files, byte for byte, and adds:
+
+- **Input checks.** Every problem is listed at once, one line each, before anything runs (exit code 2):
+  missing config keys, missing files or columns, empty tables, duplicate event IDs, missing or unreadable
+  timestamps, and links to events or objects that do not exist.
+- **Progress.** One line per step, with seconds.
+- **`--profile-only`:** prints a data health check (counts, unlinked events, backward time steps, likely label
+  typos) and stops.
+- **`--dry-run`:** runs the toolkit and prints the report without writing anything.
+- **An optional `"settings"` section** in the config:
+  `"settings": {"identity": {...}, "missing_links": {...}, "o2o": {...}}`. Unknown keys are named. Settings not
+  given keep their defaults, which are the evaluated design. Other values have not been evaluated.
+
+```bash
+python -m reconstruction.cli --config examples/synthetic/mapping.json --profile-only
+python -m reconstruction.cli --config examples/synthetic/mapping.json --dry-run
+python -m reconstruction.cli --config examples/synthetic/mapping.json --out output
+```
+
+After `pip install .`, the same command is available as `ocel-reconstruct`.
 
 ### Known export limitations (pm4py)
 
@@ -89,22 +125,21 @@ baselines on the damaged tables, and scores every output against the clean log.
 python tests/generate_datasets.py                                   # damaged tables, seed 42 (development)
 python tests/generate_datasets.py --seed 7 --out data/seeds/seed7   # held-out seed
 python tests/generate_datasets.py --seed 123 --out data/seeds/seed123
-python evaluation/run_stage10.py      # all systems, 3 seeds x 3 severities -> results/scores_stage10.csv
-python evaluation/run_stage11.py      # OCEL 2.0 export and round-trip checks -> results/export_validation.csv
-python evaluation/run_experiments.py  # checks the design freezes, re-runs seed 42 and requires the saved
-                                      # scores exactly, then builds report_assets/
+python evaluation/rebuild_all.py --full
 ```
 
-`python evaluation/run_experiments.py --full` runs the stage 10 and 11 runners itself first (about 1.5 hours).
+`rebuild_all.py --full` runs everything in order (about 1.5 hours):
+1. the stage 10 and 11 runners (all systems, 3 seeds x 3 severities, and the OCEL 2.0 export checks);
+2. `run_experiments.py`, which checks the design freezes and re-runs seed 42, requiring the saved scores exactly;
+3. the realism check on the three seeds;
+4. every table and figure in `report_assets/`.
 
-The detail tables and figures need the realism results, then their own builder:
+Without `--full` it reuses the scores saved in `results/` from an earlier full run. A fresh clone has no
+`results/`, so the first run needs `--full`.
 
-```bash
-python tests/test_id_realism.py --seed 42 --data data/messy --csv results/realism_auc.csv
-python tests/test_id_realism.py --seed 7 --data data/seeds/seed7 --csv results/realism_auc.csv
-python tests/test_id_realism.py --seed 123 --data data/seeds/seed123 --csv results/realism_auc.csv
-python evaluation/make_report_details.py
-```
+On seed 7 at 5% the realism check fails one rule by chance: one clone holds the highest sheet ID number, although
+the ID number carries no signal (AUC 0.485). `rebuild_all.py` reports this failure in the realism table and carries
+on. Every other failure stops it.
 
 ### Where results land
 
@@ -160,9 +195,16 @@ Two seeds is a small sample; the tables give the min and max next to every mean.
 
 ## Tests
 
-Every test is a plain script with `assert`s; run it directly, for example
-`python reconstruction/tests/test_identity.py`. Tests are in `reconstruction/tests/`, `evaluation/tests/` and
-`tests/`.
+Every test is a plain script with `assert`s. To run them all and get a pass / fail / skip summary:
+
+```bash
+python tests/run_all.py               # tests that need no generated data
+python tests/run_all.py --with-data   # all tests; run tests/generate_datasets.py first
+```
+
+You can also run any single test directly, for example `python reconstruction/tests/test_identity.py`. The same
+tests run on every push (`.github/workflows/tests.yml`). Old manual scripts are kept in `tests/legacy/` and are not
+run.
 
 ## Data source and citation
 
