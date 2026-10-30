@@ -1,0 +1,3 @@
+report_assets/* text eol=lf
+# after the line above, so PNGs in report_assets/ stay binary
+*.png binary
