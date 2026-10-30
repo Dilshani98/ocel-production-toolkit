@@ -1,0 +1,654 @@
+{
+  "label_typos": [
+    {
+      "event": "E01384",
+      "recorded": "InspectPrt",
+      "right": "InspectPart"
+    },
+    {
+      "event": "E00283",
+      "recorded": "InspectPrt",
+      "right": "InspectPart"
+    },
+    {
+      "event": "E00536",
+      "recorded": "InspectPart_",
+      "right": "InspectPart"
+    },
+    {
+      "event": "E00197",
+      "recorded": "InspctPart",
+      "right": "InspectPart"
+    },
+    {
+      "event": "E00956",
+      "recorded": "InspectPrt",
+      "right": "InspectPart"
+    }
+  ],
+  "timestamp_drift": {
+    "activity": "HeatSheet",
+    "seconds": 120,
+    "events": [
+      {
+        "event": "E00798",
+        "right_time": "2026-03-03 02:30:37+00:00"
+      },
+      {
+        "event": "E01192",
+        "right_time": "2026-03-03 02:40:39+00:00"
+      },
+      {
+        "event": "E00324",
+        "right_time": "2026-03-03 02:50:39+00:00"
+      },
+      {
+        "event": "E00639",
+        "right_time": "2026-03-03 03:00:38+00:00"
+      },
+      {
+        "event": "E00979",
+        "right_time": "2026-03-03 03:10:37+00:00"
+      },
+      {
+        "event": "E00706",
+        "right_time": "2026-03-03 03:20:37+00:00"
+      },
+      {
+        "event": "E00658",
+        "right_time": "2026-03-03 03:30:39+00:00"
+      },
+      {
+        "event": "E01358",
+        "right_time": "2026-03-03 03:40:39+00:00"
+      },
+      {
+        "event": "E01365",
+        "right_time": "2026-03-03 03:50:37+00:00"
+      },
+      {
+        "event": "E00241",
+        "right_time": "2026-03-03 04:00:38+00:00"
+      },
+      {
+        "event": "E00568",
+        "right_time": "2026-03-03 04:10:38+00:00"
+      },
+      {
+        "event": "E00410",
+        "right_time": "2026-03-03 04:20:42+00:00"
+      },
+      {
+        "event": "E00747",
+        "right_time": "2026-03-03 04:30:42+00:00"
+      },
+      {
+        "event": "E00392",
+        "right_time": "2026-03-03 04:40:43+00:00"
+      },
+      {
+        "event": "E01156",
+        "right_time": "2026-03-03 04:50:40+00:00"
+      },
+      {
+        "event": "E00090",
+        "right_time": "2026-03-03 05:00:43+00:00"
+      },
+      {
+        "event": "E01419",
+        "right_time": "2026-03-03 05:10:42+00:00"
+      },
+      {
+        "event": "E00047",
+        "right_time": "2026-03-03 05:20:41+00:00"
+      },
+      {
+        "event": "E01373",
+        "right_time": "2026-03-03 05:30:38+00:00"
+      },
+      {
+        "event": "E00016",
+        "right_time": "2026-03-03 05:40:42+00:00"
+      },
+      {
+        "event": "E00003",
+        "right_time": "2026-03-03 05:50:37+00:00"
+      },
+      {
+        "event": "E01163",
+        "right_time": "2026-03-03 06:00:39+00:00"
+      },
+      {
+        "event": "E00481",
+        "right_time": "2026-03-03 06:10:43+00:00"
+      },
+      {
+        "event": "E00725",
+        "right_time": "2026-03-03 06:20:38+00:00"
+      },
+      {
+        "event": "E00329",
+        "right_time": "2026-03-03 06:30:41+00:00"
+      },
+      {
+        "event": "E01347",
+        "right_time": "2026-03-03 06:40:38+00:00"
+      },
+      {
+        "event": "E00846",
+        "right_time": "2026-03-03 06:50:40+00:00"
+      },
+      {
+        "event": "E01111",
+        "right_time": "2026-03-03 07:00:37+00:00"
+      },
+      {
+        "event": "E00573",
+        "right_time": "2026-03-03 07:10:42+00:00"
+      },
+      {
+        "event": "E00739",
+        "right_time": "2026-03-03 07:20:37+00:00"
+      },
+      {
+        "event": "E00677",
+        "right_time": "2026-03-03 07:30:38+00:00"
+      },
+      {
+        "event": "E01186",
+        "right_time": "2026-03-03 07:40:43+00:00"
+      },
+      {
+        "event": "E00361",
+        "right_time": "2026-03-03 07:50:37+00:00"
+      },
+      {
+        "event": "E00298",
+        "right_time": "2026-03-03 08:00:42+00:00"
+      },
+      {
+        "event": "E01434",
+        "right_time": "2026-03-03 08:10:39+00:00"
+      },
+      {
+        "event": "E00558",
+        "right_time": "2026-03-03 08:20:39+00:00"
+      },
+      {
+        "event": "E00728",
+        "right_time": "2026-03-03 08:30:39+00:00"
+      },
+      {
+        "event": "E01029",
+        "right_time": "2026-03-03 08:40:43+00:00"
+      },
+      {
+        "event": "E01234",
+        "right_time": "2026-03-03 08:50:41+00:00"
+      },
+      {
+        "event": "E01118",
+        "right_time": "2026-03-03 09:00:38+00:00"
+      }
+    ]
+  },
+  "clones": [
+    {
+      "original": "T00436",
+      "clone": "T00234",
+      "moved_events": [
+        "E01243",
+        "E01008"
+      ],
+      "moved_o2o": []
+    },
+    {
+      "original": "T00434",
+      "clone": "T00354",
+      "moved_events": [
+        "E00745",
+        "E00479"
+      ],
+      "moved_o2o": [
+        [
+          "T00434",
+          "T00322"
+        ],
+        [
+          "T00053",
+          "T00434"
+        ]
+      ]
+    },
+    {
+      "original": "T00014",
+      "clone": "T00106",
+      "moved_events": [
+        "E01004"
+      ],
+      "moved_o2o": []
+    },
+    {
+      "original": "T00043",
+      "clone": "T00098",
+      "moved_events": [
+        "E01381",
+        "E00789"
+      ],
+      "moved_o2o": [
+        [
+          "T00043",
+          "T00442"
+        ]
+      ]
+    },
+    {
+      "original": "T00048",
+      "clone": "T00321",
+      "moved_events": [
+        "E01341",
+        "E00896"
+      ],
+      "moved_o2o": [
+        [
+          "T00048",
+          "T00482"
+        ]
+      ]
+    },
+    {
+      "original": "T00435",
+      "clone": "T00192",
+      "moved_events": [
+        "E00466"
+      ],
+      "moved_o2o": []
+    },
+    {
+      "original": "T00126",
+      "clone": "T00519",
+      "moved_events": [
+        "E00579",
+        "E00765"
+      ],
+      "moved_o2o": [
+        [
+          "T00126",
+          "T00297"
+        ],
+        [
+          "T00338",
+          "T00126"
+        ]
+      ]
+    },
+    {
+      "original": "T00506",
+      "clone": "T00155",
+      "moved_events": [
+        "E01042",
+        "E00835"
+      ],
+      "moved_o2o": [
+        [
+          "T00195",
+          "T00506"
+        ]
+      ]
+    },
+    {
+      "original": "T00149",
+      "clone": "T00024",
+      "moved_events": [
+        "E01438"
+      ],
+      "moved_o2o": [
+        [
+          "T00488",
+          "T00149"
+        ]
+      ]
+    },
+    {
+      "original": "T00343",
+      "clone": "T00287",
+      "moved_events": [
+        "E00981"
+      ],
+      "moved_o2o": []
+    },
+    {
+      "original": "T00274",
+      "clone": "T00498",
+      "moved_events": [
+        "E00424",
+        "E01222"
+      ],
+      "moved_o2o": []
+    },
+    {
+      "original": "T00397",
+      "clone": "T00464",
+      "moved_events": [
+        "E00066",
+        "E00618"
+      ],
+      "moved_o2o": [
+        [
+          "T00397",
+          "T00502"
+        ]
+      ]
+    },
+    {
+      "original": "T00062",
+      "clone": "T00438",
+      "moved_events": [
+        "E00638",
+        "E00831"
+      ],
+      "moved_o2o": [
+        [
+          "T00062",
+          "T00482"
+        ]
+      ]
+    },
+    {
+      "original": "T00046",
+      "clone": "T00270",
+      "moved_events": [
+        "E00798",
+        "E00897"
+      ],
+      "moved_o2o": [
+        [
+          "T00046",
+          "T00442"
+        ],
+        [
+          "T00238",
+          "T00046"
+        ]
+      ]
+    },
+    {
+      "original": "T00465",
+      "clone": "T00108",
+      "moved_events": [
+        "E00946"
+      ],
+      "moved_o2o": []
+    },
+    {
+      "original": "T00370",
+      "clone": "T00392",
+      "moved_events": [
+        "E00979",
+        "E01173"
+      ],
+      "moved_o2o": []
+    },
+    {
+      "original": "T00255",
+      "clone": "T00180",
+      "moved_events": [
+        "E00680"
+      ],
+      "moved_o2o": [
+        [
+          "T00255",
+          "T00442"
+        ]
+      ]
+    },
+    {
+      "original": "T00199",
+      "clone": "T00319",
+      "moved_events": [
+        "E01373",
+        "E00701"
+      ],
+      "moved_o2o": [
+        [
+          "T00199",
+          "T00035"
+        ]
+      ]
+    },
+    {
+      "original": "T00152",
+      "clone": "T00226",
+      "moved_events": [
+        "E00343"
+      ],
+      "moved_o2o": [
+        [
+          "T00445",
+          "T00152"
+        ]
+      ]
+    },
+    {
+      "original": "T00367",
+      "clone": "T00431",
+      "moved_events": [
+        "E01390",
+        "E00572"
+      ],
+      "moved_o2o": []
+    },
+    {
+      "original": "T00427",
+      "clone": "T00446",
+      "moved_events": [
+        "E01196"
+      ],
+      "moved_o2o": [
+        [
+          "T00427",
+          "T00035"
+        ]
+      ]
+    },
+    {
+      "original": "T00334",
+      "clone": "T00308",
+      "moved_events": [
+        "E00917",
+        "E00086"
+      ],
+      "moved_o2o": [
+        [
+          "T00334",
+          "T00426"
+        ],
+        [
+          "T00018",
+          "T00334"
+        ]
+      ]
+    },
+    {
+      "original": "T00040",
+      "clone": "T00026",
+      "moved_events": [
+        "E00176"
+      ],
+      "moved_o2o": [
+        [
+          "T00277",
+          "T00040"
+        ]
+      ]
+    },
+    {
+      "original": "T00448",
+      "clone": "T00359",
+      "moved_events": [
+        "E01039",
+        "E00992"
+      ],
+      "moved_o2o": [
+        [
+          "T00124",
+          "T00448"
+        ]
+      ]
+    }
+  ],
+  "removed_links": [
+    {
+      "event": "E01243",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E01083",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E01053",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E00263",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E00128",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E01412",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E01430",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E00462",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E00570",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E00103",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E00138",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E01168",
+      "object": "T00022",
+      "role": "machine"
+    },
+    {
+      "event": "E01050",
+      "object": "T00122",
+      "role": "input"
+    },
+    {
+      "event": "E00310",
+      "object": "T00352",
+      "role": "input"
+    },
+    {
+      "event": "E00197",
+      "object": "T00282",
+      "role": "input"
+    },
+    {
+      "event": "E01397",
+      "object": "T00072",
+      "role": "input"
+    },
+    {
+      "event": "E01280",
+      "object": "T00107",
+      "role": "input"
+    },
+    {
+      "event": "E01221",
+      "object": "T00353",
+      "role": "input"
+    }
+  ],
+  "swapped_o2o": [
+    {
+      "source": "T00122",
+      "right_target": "T00424",
+      "recorded_target": "T00485"
+    },
+    {
+      "source": "T00161",
+      "right_target": "T00380",
+      "recorded_target": "T00506"
+    },
+    {
+      "source": "T00288",
+      "right_target": "T00039",
+      "recorded_target": "T00171"
+    },
+    {
+      "source": "T00009",
+      "right_target": "T00369",
+      "recorded_target": "T00039"
+    },
+    {
+      "source": "T00313",
+      "right_target": "T00370",
+      "recorded_target": "T00001"
+    },
+    {
+      "source": "T00364",
+      "right_target": "T00451",
+      "recorded_target": "T00399"
+    },
+    {
+      "source": "T00458",
+      "right_target": "T00071",
+      "recorded_target": "T00206"
+    },
+    {
+      "source": "T00336",
+      "right_target": "T00515",
+      "recorded_target": "T00015"
+    },
+    {
+      "source": "T00493",
+      "right_target": "T00011",
+      "recorded_target": "T00485"
+    },
+    {
+      "source": "T00104",
+      "right_target": "T00285",
+      "recorded_target": "T00399"
+    },
+    {
+      "source": "T00296",
+      "right_target": "T00455",
+      "recorded_target": "T00440"
+    },
+    {
+      "source": "T00246",
+      "right_target": "T00491",
+      "recorded_target": "T00230"
+    }
+  ]
+}
