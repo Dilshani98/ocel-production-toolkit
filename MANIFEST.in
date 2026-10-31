@@ -1,0 +1,2 @@
+# The tests need the full repository and its data, so they stay out of the package
+prune tests

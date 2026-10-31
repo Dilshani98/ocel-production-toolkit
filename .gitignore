@@ -44,3 +44,11 @@ project.zip
 
 # sOCEL 2.0 demo subset: committed only once the dataset licence is confirmed
 examples/socel_subset/
+
+# Package build output
+dist/
+build/
+*.egg-info/
+
+# Temporary environments for package tests
+.venv-*/

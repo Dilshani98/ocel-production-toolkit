@@ -214,4 +214,6 @@ run.
 
 ## Licence
 
-> **[PLACEHOLDER: licence to be chosen.]** pm4py, which this toolkit uses, is licensed under AGPL-3.0.
+The toolkit's own code is released under the MIT License (see `LICENSE`). It installs pm4py, which is licensed
+separately under AGPL-3.0; anyone who distributes the toolkit together with pm4py must also follow pm4py's licence.
+The dataset has its own licence (see "Data source and citation" above).

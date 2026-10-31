@@ -92,7 +92,8 @@ def fail(problems, code=2):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(prog="python -m reconstruction.cli",
+    installed = os.path.basename(sys.argv[0]).lower().startswith("ocel-reconstruct")   # the console script
+    parser = argparse.ArgumentParser(prog="ocel-reconstruct" if installed else "python -m reconstruction.cli",
                                      description="Reconstruct an OCEL 2.0 log from four messy tables.")
     parser.add_argument("--config", required=True, help="JSON file naming the input files and their columns")
     parser.add_argument("--out", help="output folder (not needed with --profile-only or --dry-run)")
