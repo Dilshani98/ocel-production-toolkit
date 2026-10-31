@@ -1,0 +1,8 @@
+# Tested with Python 3.14.3. Install with: pip install -r requirements.txt
+pandas==3.0.5
+numpy==2.5.1
+pm4py==2.7.23.3
+matplotlib==3.11.1
+lxml==6.1.1
+# matplotlib writes PNG files through Pillow, so the figures are byte-identical only with this version
+pillow==12.3.0

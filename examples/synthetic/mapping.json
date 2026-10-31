@@ -1,0 +1,19 @@
+{
+  "folder": "examples/synthetic",
+  "files": {
+    "events": "events.csv",
+    "objects": "objects.csv",
+    "relations": "relations.csv",
+    "o2o": "o2o.csv"
+  },
+  "columns": {
+    "record_id_col": "event_ref",
+    "activity_col": "step",
+    "timestamp_col": "recorded_at",
+    "item_id_col": "thing_id",
+    "item_type_col": "thing_kind",
+    "linked_item_id_col": "other_thing",
+    "link_type_col": "relation",
+    "role_col": "part_played"
+  }
+}

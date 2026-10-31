@@ -1,0 +1,24 @@
+{
+  "frozen_at": "2026-10-27T00:16:30",
+  "stage": 12,
+  "note": "Stage 12 freeze: the whole toolkit (reconstruction/*.py, including the user-facing command reconstruct.py) and the evaluation code that turns runs into reported numbers (scoring.py, plots.py, make_report.py, run_experiments.py). Frozen after the unit tests passed (reconstruct 3, export 9, scoring 14, make_report 4, blind separation) and after development seed 42 reproduced stage 10 exactly for all 7 systems at all 3 severities (1,302 scores). No held-out run was made for stage 12. Hashes are of LF-normalised file contents.",
+  "files": {
+    "reconstruction/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reconstruction/baselines.py": "01630f53df408177618cd3fd1a15aca15b429e3200e0d79bec1ca5f8aaf94c46",
+    "reconstruction/cleaning.py": "6118c80e270b69ae846a3584886ce8bef9e7cd79dfd3578ee45c45baebe49246",
+    "reconstruction/complete.py": "3937f1192bf283b7b109b69b57ddcb1fc926938c420d132cf3a057e8daa5393c",
+    "reconstruction/export.py": "79c22c599601b92a4153a275f3971fb49e07b34ddbf240e481a20d31894d9d80",
+    "reconstruction/identity.py": "41e66c6e5cc064449ebfbc4db2e21442ef15e992afb18641133dca4492fc8093",
+    "reconstruction/mapping.py": "fd18fa5735349ce9f63d7095dc3ead268fa229cbde699c4c5cca12396aa30fe4",
+    "reconstruction/o2o.py": "23480a2299aca22b88205c6501ca5270e809278b6ed2cf95a19346710e184037",
+    "reconstruction/pipeline.py": "e02ebf4121d50d52b820d8764115e636691f8c15541b5888913ee7798c1a8194",
+    "reconstruction/profiling.py": "711488a254964718b5e10c2d6bba0ef5a9c8dd766b933c32ef35c838c6e56358",
+    "reconstruction/reconstruct.py": "4984b5543c0c5ba4d72797a1808ca71c851dd85ea74e46cff0097eb848321ac0",
+    "reconstruction/relations.py": "8001858048c46a7e469d82d5956b2ba0775696f9fcc0febd2e9e574f55edd95c",
+    "reconstruction/toolkit.py": "ccc0db2100aaa1fd20a16f55681630387f7d74ef33ba320439e7cb1d542b5f0f",
+    "evaluation/scoring.py": "dde8766400a59ba9bf479dae9e6e5e92a475115456614308d2c9ece78dcfac87",
+    "evaluation/plots.py": "9ab5532d8ef4c3afd87761985c578c7fc2147a556920aab00bc9411a3a0eebdb",
+    "evaluation/make_report.py": "142b1f063cd856b10fae6056a9a848125a718db3d1f8d2ae1975b1ce7d935adc",
+    "evaluation/run_experiments.py": "8a942350083899afc0094e978bd396f2a51dfc3df09b91a3b805982a762a7f23"
+  }
+}

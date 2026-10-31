@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ocel-production-toolkit"
+version = "1.0.0"
+description = "Rebuild an OCEL 2.0 object-centric event log from messy, fragmented production tables."
+readme = "README.md"
+requires-python = ">=3.14"
+# the same versions as requirements.txt (the tested environment)
+dependencies = [
+    "pandas==3.0.5",
+    "numpy==2.5.1",
+    "pm4py==2.7.23.3",
+    "matplotlib==3.11.1",
+    "lxml==6.1.1",
+    "pillow==12.3.0",
+]
+
+[project.scripts]
+ocel-reconstruct = "reconstruction.cli:main"
+
+[tool.setuptools]
+packages = ["reconstruction"]

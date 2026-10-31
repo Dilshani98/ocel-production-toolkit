@@ -6,7 +6,7 @@ import pandas as pd
 # Ground truth is used here (test code) only to know which IDs are clones.
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data", "messy")
-TAGS = sys.argv[1:] or ["sev0_05", "sev0_15", "sev0_3"]
+TAGS = ["sev0_05", "sev0_15", "sev0_3"]
 
 
 def auc(scores, is_positive):
@@ -25,12 +25,12 @@ def number(ids):
     return ids.astype(str).str.extract(r"(\d+)$")[0]
 
 
-def check(tag):
-    ev = pd.read_csv(os.path.join(DATA, f"messy_events_{tag}.csv"), usecols=["record_id", "activity_name"])
-    ob = pd.read_csv(os.path.join(DATA, f"messy_objects_{tag}.csv"), dtype=str)   # keep values as written
-    rel = pd.read_csv(os.path.join(DATA, f"messy_relations_{tag}.csv"))
-    o2o = pd.read_csv(os.path.join(DATA, f"messy_o2o_{tag}.csv"))
-    gt = json.load(open(os.path.join(DATA, f"ground_truth_{tag}.json")))
+def check(tag, data=DATA):
+    ev = pd.read_csv(os.path.join(data, f"messy_events_{tag}.csv"), usecols=["record_id", "activity_name"])
+    ob = pd.read_csv(os.path.join(data, f"messy_objects_{tag}.csv"), dtype=str)   # keep values as written
+    rel = pd.read_csv(os.path.join(data, f"messy_relations_{tag}.csv"))
+    o2o = pd.read_csv(os.path.join(data, f"messy_o2o_{tag}.csv"))
+    gt = json.load(open(os.path.join(data, f"ground_truth_{tag}.json")))
     clones = {g["details"]["clone_id"] for g in gt if g["change_type"] == "clone_created"}
     results = {}
 
@@ -127,15 +127,31 @@ def check(tag):
 
 
 if __name__ == "__main__":
-    failed = 0
-    for tag in TAGS:
+    import argparse
+    parser = argparse.ArgumentParser(description="ID and position realism checks on the messy data.")
+    parser.add_argument("tags", nargs="*", default=TAGS)
+    parser.add_argument("--data", default=DATA, help="folder with the messy files (default: seed 42)")
+    parser.add_argument("--seed", type=int, default=42, help="seed of that folder, written to the CSV")
+    parser.add_argument("--csv", help="also save every AUC as rows (seed, severity, check, auc)")
+    args = parser.parse_args()
+    failed, rows = 0, []
+    for tag in args.tags:
         try:
-            res = check(tag)
+            res = check(tag, args.data)
+            rows += [(args.seed, float(tag[3:].replace("_", ".")), k, v) for k, v in res.items() if k.endswith("AUC")]
             print(f"PASS {tag}")
             for k, v in res.items():
                 print(f"   {k}: {v}")
         except AssertionError as e:
             failed += 1
+            rows.append((args.seed, float(tag[3:].replace("_", ".")), f"FAILED: {e}", float("nan")))
             print(f"FAIL {tag} - {e}")
-    assert failed == 0, f"{failed} of {len(TAGS)} severities failed"
+    if args.csv:                                          # saved before the final assert, failures included
+        new = pd.DataFrame(rows, columns=["seed", "severity", "check", "auc"])
+        if os.path.exists(args.csv):                      # replace this seed's rows, keep the others
+            old = pd.read_csv(args.csv)
+            new = pd.concat([old[old.seed != args.seed], new]).sort_values(["seed", "severity"], kind="stable")
+        new.to_csv(args.csv, index=False, lineterminator="\n")
+        print(f"saved {len(rows)} rows for seed {args.seed} to {args.csv}")
+    assert failed == 0, f"{failed} of {len(args.tags)} severities failed"
     print("ALL ID REALISM TESTS PASSED")

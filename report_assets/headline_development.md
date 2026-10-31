@@ -1,0 +1,125 @@
+## Development (1 seed)
+
+Development seed: the seed the rules were explored on.
+
+| area | metric | system | 5% | 15% | 30% |
+|---|---|---|---|---|---|
+| labels | accuracy | B0 (as-is) | 0.9923 | 0.9770 | 0.9540 |
+| labels | accuracy | B1 (hygiene) | 0.9923 | 0.9770 | 0.9540 |
+| labels | accuracy | B2 (pair-only) | 0.9923 | 0.9770 | 0.9540 |
+| labels | accuracy | B3 (closest in time) | 1.0000 | 1.0000 | 1.0000 |
+| labels | accuracy | B4 (B3 + eager links) | 1.0000 | 1.0000 | 1.0000 |
+| labels | accuracy | B5 (toolkit, delete O2O) | 1.0000 | 1.0000 | 1.0000 |
+| labels | accuracy | Toolkit | 1.0000 | 1.0000 | 1.0000 |
+| timestamps | drifted_restored_exactly | B0 (as-is) | 0.0000 | 0.0000 | 0.0000 |
+| timestamps | drifted_restored_exactly | B1 (hygiene) | 0.0000 | 0.0000 | 0.0000 |
+| timestamps | drifted_restored_exactly | B2 (pair-only) | 0.0000 | 0.0000 | 0.0000 |
+| timestamps | drifted_restored_exactly | B3 (closest in time) | 1.0000 | 1.0000 | 1.0000 |
+| timestamps | drifted_restored_exactly | B4 (B3 + eager links) | 1.0000 | 1.0000 | 1.0000 |
+| timestamps | drifted_restored_exactly | B5 (toolkit, delete O2O) | 1.0000 | 1.0000 | 1.0000 |
+| timestamps | drifted_restored_exactly | Toolkit | 1.0000 | 1.0000 | 1.0000 |
+| identity | precision | B0 (as-is) | 0.0000 | 0.0000 | 0.0000 |
+| identity | precision | B1 (hygiene) | 0.0000 | 0.0000 | 0.0000 |
+| identity | precision | B2 (pair-only) | 0.0000 | 0.0000 | 0.0000 |
+| identity | precision | B3 (closest in time) | 0.9864 | 0.9762 | 0.9160 |
+| identity | precision | B4 (B3 + eager links) | 0.9864 | 0.9762 | 0.9160 |
+| identity | precision | B5 (toolkit, delete O2O) | 1.0000 | 0.9988 | 0.9965 |
+| identity | precision | Toolkit | 1.0000 | 0.9988 | 0.9965 |
+| identity | recall | B0 (as-is) | 0.0000 | 0.0000 | 0.0000 |
+| identity | recall | B1 (hygiene) | 0.0000 | 0.0000 | 0.0000 |
+| identity | recall | B2 (pair-only) | 0.0000 | 0.0000 | 0.0000 |
+| identity | recall | B3 (closest in time) | 0.9864 | 0.9718 | 0.9103 |
+| identity | recall | B4 (B3 + eager links) | 0.9864 | 0.9718 | 0.9103 |
+| identity | recall | B5 (toolkit, delete O2O) | 0.9390 | 0.9300 | 0.6424 |
+| identity | recall | Toolkit | 0.9390 | 0.9300 | 0.6424 |
+| identity | f1 | B0 (as-is) | 0.0000 | 0.0000 | 0.0000 |
+| identity | f1 | B1 (hygiene) | 0.0000 | 0.0000 | 0.0000 |
+| identity | f1 | B2 (pair-only) | 0.0000 | 0.0000 | 0.0000 |
+| identity | f1 | B3 (closest in time) | 0.9864 | 0.9740 | 0.9132 |
+| identity | f1 | B4 (B3 + eager links) | 0.9864 | 0.9740 | 0.9132 |
+| identity | f1 | B5 (toolkit, delete O2O) | 0.9685 | 0.9632 | 0.7812 |
+| identity | f1 | Toolkit | 0.9685 | 0.9632 | 0.7812 |
+| identity | false_merges | B0 (as-is) | 0.0000 | 0.0000 | 0.0000 |
+| identity | false_merges | B1 (hygiene) | 0.0000 | 0.0000 | 0.0000 |
+| identity | false_merges | B2 (pair-only) | 30 | 30 | 30 |
+| identity | false_merges | B3 (closest in time) | 4.0000 | 21 | 148 |
+| identity | false_merges | B4 (B3 + eager links) | 4.0000 | 21 | 148 |
+| identity | false_merges | B5 (toolkit, delete O2O) | 0.0000 | 1.0000 | 4.0000 |
+| identity | false_merges | Toolkit | 0.0000 | 1.0000 | 4.0000 |
+| e2o | precision | B0 (as-is) | 0.9969 | 0.9905 | 0.9808 |
+| e2o | precision | B1 (hygiene) | 0.9969 | 0.9905 | 0.9808 |
+| e2o | precision | B2 (pair-only) | 0.9958 | 0.9895 | 0.9799 |
+| e2o | precision | B3 (closest in time) | 0.9999 | 0.9995 | 0.9967 |
+| e2o | precision | B4 (B3 + eager links) | 0.9991 | 0.9954 | 0.9859 |
+| e2o | precision | B5 (toolkit, delete O2O) | 0.9998 | 0.9993 | 0.9931 |
+| e2o | precision | Toolkit | 0.9998 | 0.9993 | 0.9931 |
+| e2o | recall | B0 (as-is) | 0.9909 | 0.9727 | 0.9454 |
+| e2o | recall | B1 (hygiene) | 0.9909 | 0.9727 | 0.9454 |
+| e2o | recall | B2 (pair-only) | 0.9898 | 0.9717 | 0.9445 |
+| e2o | recall | B3 (closest in time) | 0.9939 | 0.9815 | 0.9607 |
+| e2o | recall | B4 (B3 + eager links) | 0.9980 | 0.9923 | 0.9798 |
+| e2o | recall | B5 (toolkit, delete O2O) | 0.9959 | 0.9874 | 0.9694 |
+| e2o | recall | Toolkit | 0.9959 | 0.9874 | 0.9694 |
+| e2o | f1 | B0 (as-is) | 0.9938 | 0.9815 | 0.9627 |
+| e2o | f1 | B1 (hygiene) | 0.9938 | 0.9815 | 0.9627 |
+| e2o | f1 | B2 (pair-only) | 0.9928 | 0.9805 | 0.9619 |
+| e2o | f1 | B3 (closest in time) | 0.9969 | 0.9904 | 0.9784 |
+| e2o | f1 | B4 (B3 + eager links) | 0.9986 | 0.9938 | 0.9828 |
+| e2o | f1 | B5 (toolkit, delete O2O) | 0.9978 | 0.9934 | 0.9811 |
+| e2o | f1 | Toolkit | 0.9978 | 0.9934 | 0.9811 |
+| e2o | affected_recall | B0 (as-is) | 0.0000 | 0.0000 | 0.0000 |
+| e2o | affected_recall | B1 (hygiene) | 0.0000 | 0.0000 | 0.0000 |
+| e2o | affected_recall | B2 (pair-only) | 0.0000 | 0.0000 | 0.0000 |
+| e2o | affected_recall | B3 (closest in time) | 0.3374 | 0.3303 | 0.3082 |
+| e2o | affected_recall | B4 (B3 + eager links) | 0.7902 | 0.7245 | 0.6571 |
+| e2o | affected_recall | B5 (toolkit, delete O2O) | 0.5479 | 0.5417 | 0.4411 |
+| e2o | affected_recall | Toolkit | 0.5479 | 0.5417 | 0.4411 |
+| o2o | precision | B0 (as-is) | 0.9370 | 0.8143 | 0.6393 |
+| o2o | precision | B1 (hygiene) | 0.9370 | 0.8143 | 0.6393 |
+| o2o | precision | B2 (pair-only) | 0.9327 | 0.8104 | 0.6367 |
+| o2o | precision | B3 (closest in time) | 0.9500 | 0.8515 | 0.7031 |
+| o2o | precision | B4 (B3 + eager links) | 0.9500 | 0.8515 | 0.7031 |
+| o2o | precision | B5 (toolkit, delete O2O) | 0.9993 | 0.9977 | 0.9728 |
+| o2o | precision | Toolkit | 0.9991 | 0.9968 | 0.9638 |
+| o2o | recall | B0 (as-is) | 0.9370 | 0.8143 | 0.6393 |
+| o2o | recall | B1 (hygiene) | 0.9370 | 0.8143 | 0.6393 |
+| o2o | recall | B2 (pair-only) | 0.9325 | 0.8102 | 0.6366 |
+| o2o | recall | B3 (closest in time) | 0.9500 | 0.8513 | 0.7023 |
+| o2o | recall | B4 (B3 + eager links) | 0.9500 | 0.8513 | 0.7023 |
+| o2o | recall | B5 (toolkit, delete O2O) | 0.9494 | 0.8503 | 0.6851 |
+| o2o | recall | Toolkit | 0.9991 | 0.9967 | 0.9638 |
+| o2o | f1 | B0 (as-is) | 0.9370 | 0.8143 | 0.6393 |
+| o2o | f1 | B1 (hygiene) | 0.9370 | 0.8143 | 0.6393 |
+| o2o | f1 | B2 (pair-only) | 0.9326 | 0.8103 | 0.6366 |
+| o2o | f1 | B3 (closest in time) | 0.9500 | 0.8514 | 0.7027 |
+| o2o | f1 | B4 (B3 + eager links) | 0.9500 | 0.8514 | 0.7027 |
+| o2o | f1 | B5 (toolkit, delete O2O) | 0.9737 | 0.9182 | 0.8040 |
+| o2o | f1 | Toolkit | 0.9991 | 0.9968 | 0.9638 |
+| o2o | affected_recall | B0 (as-is) | 0.0000 | 0.0000 | 0.0004 |
+| o2o | affected_recall | B1 (hygiene) | 0.0000 | 0.0000 | 0.0004 |
+| o2o | affected_recall | B2 (pair-only) | 0.0000 | 0.0000 | 0.0004 |
+| o2o | affected_recall | B3 (closest in time) | 0.2077 | 0.2056 | 0.1898 |
+| o2o | affected_recall | B4 (B3 + eager links) | 0.2077 | 0.2056 | 0.1898 |
+| o2o | affected_recall | B5 (toolkit, delete O2O) | 0.1985 | 0.1975 | 0.1408 |
+| o2o | affected_recall | Toolkit | 0.9861 | 0.9832 | 0.9003 |
+| usefulness | edge_f1 | B0 (as-is) | 0.4751 | 0.4052 | 0.3553 |
+| usefulness | edge_f1 | B1 (hygiene) | 0.4751 | 0.4052 | 0.3553 |
+| usefulness | edge_f1 | B2 (pair-only) | 0.4627 | 0.3962 | 0.3473 |
+| usefulness | edge_f1 | B3 (closest in time) | 1.0000 | 1.0000 | 1.0000 |
+| usefulness | edge_f1 | B4 (B3 + eager links) | 1.0000 | 1.0000 | 1.0000 |
+| usefulness | edge_f1 | B5 (toolkit, delete O2O) | 0.9920 | 0.9920 | 0.9920 |
+| usefulness | edge_f1 | Toolkit | 0.9920 | 0.9920 | 0.9920 |
+| usefulness | edge_frequency_difference | B0 (as-is) | 0.0425 | 0.1015 | 0.1979 |
+| usefulness | edge_frequency_difference | B1 (hygiene) | 0.0425 | 0.1015 | 0.1979 |
+| usefulness | edge_frequency_difference | B2 (pair-only) | 0.0428 | 0.1018 | 0.1982 |
+| usefulness | edge_frequency_difference | B3 (closest in time) | 0.0060 | 0.0180 | 0.0360 |
+| usefulness | edge_frequency_difference | B4 (B3 + eager links) | 0.0000 | 0.0001 | 0.0003 |
+| usefulness | edge_frequency_difference | B5 (toolkit, delete O2O) | 0.0038 | 0.0113 | 0.0298 |
+| usefulness | edge_frequency_difference | Toolkit | 0.0038 | 0.0113 | 0.0298 |
+| usefulness | object_count_abs_difference | B0 (as-is) | 295 | 886 | 1773 |
+| usefulness | object_count_abs_difference | B1 (hygiene) | 295 | 886 | 1773 |
+| usefulness | object_count_abs_difference | B2 (pair-only) | 279 | 870 | 1757 |
+| usefulness | object_count_abs_difference | B3 (closest in time) | 0.0000 | 4.0000 | 11 |
+| usefulness | object_count_abs_difference | B4 (B3 + eager links) | 0.0000 | 4.0000 | 11 |
+| usefulness | object_count_abs_difference | B5 (toolkit, delete O2O) | 18 | 61 | 630 |
+| usefulness | object_count_abs_difference | Toolkit | 18 | 61 | 630 |

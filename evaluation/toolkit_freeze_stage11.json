@@ -1,0 +1,50 @@
+{
+  "frozen_at": "2026-10-26T19:51:24",
+  "stage": 11,
+  "note": "Stage 11 design (export.py) frozen after its 7 unit tests passed, before any real-data run. Exploration used seed 42 at 15% and the clean log only. Hashes are of LF-normalised file contents.",
+  "files": {
+    "reconstruction/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reconstruction/baselines.py": "01630f53df408177618cd3fd1a15aca15b429e3200e0d79bec1ca5f8aaf94c46",
+    "reconstruction/cleaning.py": "6118c80e270b69ae846a3584886ce8bef9e7cd79dfd3578ee45c45baebe49246",
+    "reconstruction/complete.py": "3937f1192bf283b7b109b69b57ddcb1fc926938c420d132cf3a057e8daa5393c",
+    "reconstruction/export.py": "67ab8a1cad1682d7826b395ad0387516436bf8b328e0378535c330c71810153e",
+    "reconstruction/identity.py": "41e66c6e5cc064449ebfbc4db2e21442ef15e992afb18641133dca4492fc8093",
+    "reconstruction/mapping.py": "fd18fa5735349ce9f63d7095dc3ead268fa229cbde699c4c5cca12396aa30fe4",
+    "reconstruction/o2o.py": "23480a2299aca22b88205c6501ca5270e809278b6ed2cf95a19346710e184037",
+    "reconstruction/pipeline.py": "e02ebf4121d50d52b820d8764115e636691f8c15541b5888913ee7798c1a8194",
+    "reconstruction/profiling.py": "711488a254964718b5e10c2d6bba0ef5a9c8dd766b933c32ef35c838c6e56358",
+    "reconstruction/relations.py": "8001858048c46a7e469d82d5956b2ba0775696f9fcc0febd2e9e574f55edd95c",
+    "reconstruction/toolkit.py": "ccc0db2100aaa1fd20a16f55681630387f7d74ef33ba320439e7cb1d542b5f0f"
+  },
+  "amendments": [
+    {
+      "date": "2026-10-26T23:37:45",
+      "approved_by": "student, 26 Oct 2026",
+      "reason": "Run 1 failed its round-trip checks: pm4py writers and readers drop objects with no event-to-object link (allowed by OCEL 2.0). export.write() now adds them back to the file in every format, and export.read() adds back objects dropped by pm4py reader. JSON attribute values stay numeric (the specification does not require strings). Recorded before the single re-run. Unit tests: 9, all passing; mutation checks done.",
+      "files_changed": [
+        "reconstruction/export.py",
+        "reconstruction/tests/test_export.py"
+      ],
+      "files": {
+        "reconstruction/export.py": "8fdf2ca3835dac13792a9230fcfbf58d8cf1a7642f17b2a183050141aaab266f"
+      },
+      "previous": {
+        "reconstruction/export.py": "67ab8a1cad1682d7826b395ad0387516436bf8b328e0378535c330c71810153e"
+      }
+    },
+    {
+      "date": "2026-10-27T00:08:29",
+      "approved_by": "student, 27 Oct 2026",
+      "reason": "Message text only: the refusal for an object whose type has no events now says what is wrong and what to do. Code is otherwise unchanged (abstract syntax trees equal once string text is ignored). Unit tests: 9, all passing. No re-run needed: no export result depends on the message text.",
+      "files_changed": [
+        "reconstruction/export.py"
+      ],
+      "files": {
+        "reconstruction/export.py": "79c22c599601b92a4153a275f3971fb49e07b34ddbf240e481a20d31894d9d80"
+      },
+      "previous": {
+        "reconstruction/export.py": "8fdf2ca3835dac13792a9230fcfbf58d8cf1a7642f17b2a183050141aaab266f"
+      }
+    }
+  ]
+}
